@@ -9,7 +9,7 @@ YACC_SRC=splc.y
 
 splc: .lex .syntax
 	$(CC) -o ./bin/$@ $(FLAGS) $(LDFLAGS) $(CPPFLAGS) $(SRC_DIR)/splc.tab.c
-texical.o: .lex
+texical.o: .lex .syntax
 	$(CC) -o ./bin/$@ -lfl $(LDFLAGS) $(CPPFLAGS) $(SRC_DIR)/lex.yy.c 
 .lex: $(SRC_DIR)/$(LEX_SRC)
 	$(FLEX) -o $(SRC_DIR)/lex.yy.c $<

@@ -20,7 +20,6 @@ TYPE		(int|float|char)
 {INT}		{ printf("<INT, %s>\n", yytext); return INT; }
 {FLOAT}		{ printf("<FLOAT, %s>\n", yytext); return FLOAT; }
 {CHAR}		{ printf("<CHAR, %s>\n", yytext); return CHAR; }
-{ID}		{ printf("<ID, %s>\n", yytext); return ID; }
 {TYPE}		{ printf("<TYPE, %s>\n", yytext); return TYPE; }
 "struct"	{ printf("<STRUCT, %s>\n", yytext); return STRUCT; }
 "if"		{ printf("<IF, %s>\n", yytext); return IF; }
@@ -50,4 +49,5 @@ TYPE		(int|float|char)
 "]"		{ printf("<RB, %s>\n", yytext); return RB; }
 "{"		{ printf("<LC, %s>\n", yytext); return LC; }
 "}"		{ printf("<RC, %s>\n", yytext); return RC; }
+{ID}		{ printf("<ID, %s>\n", yytext); return ID; }
 .		{}

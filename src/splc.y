@@ -7,7 +7,7 @@
 File: ;
 
 %%
-int main(int argc, char **argv) {
+/* int main(int argc, char **argv) {
 	if (argc < 2) {
 		fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
 		return 1;
@@ -23,4 +23,9 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+} */
+
+void yyerror(const char* msg)
+{
+	fprintf(stderr, "%s", msg);
 }

@@ -13,7 +13,7 @@ id		{letter_}+({letter_}|[0-9])*
 INT		{hex_integer}|{decimal_integer}
 FLOAT		{float}
 CHAR		{char}
-ID		(id)
+ID		{id}
 TYPE		(int|float|char)
 
 %%

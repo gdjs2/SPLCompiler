@@ -76,6 +76,7 @@ Dec:
 Exp:
 	  Exp ASSIGN Exp
 	| Exp AND Exp
+	| Exp OR Exp
 	| Exp LT Exp
 	| Exp LE Exp
 	| Exp GT Exp

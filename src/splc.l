@@ -7,16 +7,20 @@ letter_		_|{letter}
 hex_integer	-?0x[0-9a-fA-F]*
 decimal_integer	-?(0|[1-9][0-9]*)
 float		-?[0-9]+\.[0-9]+
-char		'{letter}'
-id		{letter_}+({letter_}|[0-9])*
+char		'.'
+id		{letter_}({letter_}|[0-9])*
+white		[\t\r ]
 
 INT		{hex_integer}|{decimal_integer}
 FLOAT		{float}
 CHAR		{char}
 ID		{id}
 TYPE		(int|float|char)
+WHITE		{white}
 
 %%
+{WHITE}		{ }
+\n		{ }
 {INT}		{ printf("<INT, %s>\n", yytext); return INT; }
 {FLOAT}		{ printf("<FLOAT, %s>\n", yytext); return FLOAT; }
 {CHAR}		{ printf("<CHAR, %s>\n", yytext); return CHAR; }
@@ -50,4 +54,25 @@ TYPE		(int|float|char)
 "{"		{ printf("<LC, %s>\n", yytext); return LC; }
 "}"		{ printf("<RC, %s>\n", yytext); return RC; }
 {ID}		{ printf("<ID, %s>\n", yytext); return ID; }
-.		{}
+<<EOF>>		{ printf("END OF THE FILE\n"); return 0; }
+.		{ printf("Unknown character\n"); return 0; }
+
+
+%%
+int main(int argc, char **argv) {
+	if (argc < 2) {
+		fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
+		return 1;
+	} else if (argc == 2) {
+		if (!(yyin = fopen(argv[1], "r"))) {
+			perror(argv[1]);
+			return 1;
+		}
+		while(yylex());
+		return 0;
+	} else {
+		fputs("Too many arguments! Expected: 2\n", stderr);
+		return 1;
+	}
+
+}

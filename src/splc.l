@@ -4,7 +4,7 @@
 	typedef struct tree_node tree_node;
 	typedef struct child_list_node child_list_node;
 
-	tree_node* make_tree_node(const char*);
+	tree_node* make_tree_node(const char*, int, int);
 	child_list_node* make_child_list_node(tree_node*);
 	void add_child(tree_node*, tree_node*);
 	void show_tree(tree_node*, int);
@@ -12,6 +12,7 @@
 	struct tree_node {
 		const char *name;
 		int line_no;
+		int is_terminate;
 		child_list_node *child_first_ptr;
 	};
 
@@ -48,7 +49,7 @@ WHITE		{white}
 #endif
 	char *str = (char*)malloc(sizeof("INT: ") + strlen(yytext) + 1);
 	sprintf(str, "INT: %s", yytext);
-	yylval.tree_node = make_tree_node(str);
+	yylval.tree_node = make_tree_node(str, 0, 1);
 	return INT; 
 }
 {FLOAT} { 
@@ -57,7 +58,7 @@ WHITE		{white}
 #endif
 	char *str = (char*)malloc(sizeof("FLOAT: ") + strlen(yytext) + 1);
 	sprintf(str, "FLOAT: %s", yytext);
-	yylval.tree_node = make_tree_node(str);
+	yylval.tree_node = make_tree_node(str, 0, 1);
 	return FLOAT; 
 }
 {CHAR} {
@@ -66,7 +67,7 @@ WHITE		{white}
 #endif
 	char *str = (char*)malloc(sizeof("CHAR: ") + strlen(yytext) + 1);
 	sprintf(str, "CHAR: %s", yytext);
-	yylval.tree_node = make_tree_node(str);
+	yylval.tree_node = make_tree_node(str, 0, 1);
 	return CHAR; 
 }
 {TYPE} {
@@ -75,203 +76,203 @@ WHITE		{white}
 #endif
 	char *str = (char*)malloc(sizeof("TYPE: ") + strlen(yytext) + 1);
 	sprintf(str, "TYPE: %s", yytext);
-	yylval.tree_node = make_tree_node(str);
+	yylval.tree_node = make_tree_node(str, 0, 1);
 	return TYPE;
 }
 "struct" { 
 #ifdef DEBUG
 	printf("<STRUCT, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("STRUCT");
+	yylval.tree_node = make_tree_node("STRUCT", 0, 1);
 	return STRUCT; 
 }
 "if" { 
 #ifdef DEBUG
 	printf("<IF, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("IF");
+	yylval.tree_node = make_tree_node("IF", 0, 1);
 	return IF; 
 }
 "else" {
 #ifdef DEBUG
 	printf("<ELSE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("ELSE");
+	yylval.tree_node = make_tree_node("ELSE", 0, 1);
 	return ELSE;
 }
 "while" {
 #ifdef DEBUG
 	printf("<WHILE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("WHILE");
+	yylval.tree_node = make_tree_node("WHILE", 0, 1);
 	return WHILE; 
 }
 "return" {
 #ifdef DEBUG
 	printf("<RETURN, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("RETURN");
+	yylval.tree_node = make_tree_node("RETURN", 0, 1);
 	return RETURN; 
 }
 "." {
 #ifdef DEBUG
 	printf("<DOT, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("DOT");
+	yylval.tree_node = make_tree_node("DOT", 0, 1);
 	return DOT; 
 }
 ";" { 
 #ifdef DEBUG
 	printf("<SEMI, %s>\n", yytext); 
 #endif
-	yylval.tree_node = make_tree_node("SEMI");
+	yylval.tree_node = make_tree_node("SEMI", 0, 1);
 	return SEMI; 
 }
 "," {
 #ifdef DEBUG
 	printf("<COMMA, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("COMMA");
+	yylval.tree_node = make_tree_node("COMMA", 0, 1);
 	return COMMA;
 }
 "=" {
 #ifdef DEBUG
 	printf("<ASSIGN, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("ASSIGN");
+	yylval.tree_node = make_tree_node("ASSIGN", 0, 1);
 	return ASSIGN;
 }
 "<" {
 #ifdef DEBUG
 	printf("<LT, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LT");
+	yylval.tree_node = make_tree_node("LT", 0, 1);
 	return LT;
 }
 "<=" {
 #ifdef DEBUG
 	printf("<LE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LT");
+	yylval.tree_node = make_tree_node("LT", 0, 1);
 	return LE;
 }
 ">" {
 #ifdef DEBUG
 	printf("<GT, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("GT");
+	yylval.tree_node = make_tree_node("GT", 0, 1);
 	return GT;
 }
 ">=" {
 #ifdef DEBUG
 	printf("<GE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("GE");
+	yylval.tree_node = make_tree_node("GE", 0, 1);
 	return GE;
 }
 "!=" {
 #ifdef DEBUG
 	printf("<NE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("NE");
+	yylval.tree_node = make_tree_node("NE", 0, 1);
 	return NE;
 }
 "==" {
 #ifdef DEBUG
 	printf("<EQ, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("EQ");
+	yylval.tree_node = make_tree_node("EQ", 0, 1);
 	return EQ;
 }
 "+" {
 #ifdef DEBUG
 	printf("<PLUS, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("PLUS");
+	yylval.tree_node = make_tree_node("PLUS", 0, 1);
 	return PLUS;
 }
 "-" {
 #ifdef DEBUG
 	printf("<MINUS, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("MINUS");
+	yylval.tree_node = make_tree_node("MINUS", 0, 1);
 	return MINUS;
 }
 "*" {
 #ifdef DEBUG
 	printf("<MUL, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("MUL");
+	yylval.tree_node = make_tree_node("MUL", 0, 1);
 	return MUL; 
 }
 "/" {
 #ifdef DEBUG
 	printf("<DIV, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("DIV");
+	yylval.tree_node = make_tree_node("DIV", 0, 1);
 	return DIV; 
 }
 "&&" {
 #ifdef DEBUG
 	printf("<AND, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("AND");
+	yylval.tree_node = make_tree_node("AND", 0, 1);
 	return AND; 
 }
 "||" {
 #ifdef DEBUG
 	printf("<OR, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("OR");
+	yylval.tree_node = make_tree_node("OR", 0, 1);
 	return OR; 
 }
 "!" {
 #ifdef DEBUG
 	printf("<NOT, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("NOT");
+	yylval.tree_node = make_tree_node("NOT", 0, 1);
 	return NOT; 
 }
 "(" {
 #ifdef DEBUG 
 	printf("<LP, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LP");
+	yylval.tree_node = make_tree_node("LP", 0, 1);
 	return LP; 
 }
 ")" {
 #ifdef DEBUG
 	printf("<RP, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("RP");
+	yylval.tree_node = make_tree_node("RP", 0, 1);
 	return RP; 
 }
 "[" {
 #ifdef DEBUG
 	printf("<LB, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LB");
+	yylval.tree_node = make_tree_node("LB", 0, 1);
 	return LB; 
 }
 "]" {
 #ifdef DEBUG
 	printf("<RB, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("RB");
+	yylval.tree_node = make_tree_node("RB", 0, 1);
 	return RB; 
 }
 "{" {
 #ifdef DEBUG
 	printf("<LC, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LC");
+	yylval.tree_node = make_tree_node("LC", 0, 1);
 	return LC; 
 }
 "}" {
 #ifdef DEBUG
 	printf("<RC, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("RC");
+	yylval.tree_node = make_tree_node("RC", 0, 1);
 	return RC; 
 }
 {ID} {
@@ -280,7 +281,7 @@ WHITE		{white}
 #endif
 	char *str = (char*)malloc(sizeof("ID: ") + strlen(yytext) + 1);
 	sprintf(str, "ID: %s", yytext);
-	yylval.tree_node = make_tree_node(str);
+	yylval.tree_node = make_tree_node(str, 0, 1);
 	return ID; 
 }
 <<EOF>> {
@@ -296,11 +297,12 @@ WHITE		{white}
 
 %%
 
-tree_node* make_tree_node(const char *name) {
+tree_node* make_tree_node(const char *name, int line_no, int is_terminate) {
 	tree_node* node = (tree_node*)malloc(sizeof(tree_node));
 	node->name = name;
-	node->line_no = yylineno;
+	node->line_no = line_no ? line_no : yylineno;
 	node->child_first_ptr = (child_list_node*)NULL;
+	node->is_terminate = is_terminate;
 	return node;
 }
 

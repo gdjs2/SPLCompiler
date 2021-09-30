@@ -1,7 +1,7 @@
 CC=gcc
 FLEX=flex
 BISON=bison
-FLAGS=-ly -lfl
+FLAGS=-lfl -ly
 
 SRC_DIR=./src
 LEX_SRC=splc.l

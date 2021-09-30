@@ -1,6 +1,24 @@
 %{
 	#include "lex.yy.c"
+
+	typedef struct tree_node tree_node;
+	typedef struct child_list_node child_list_node;
+
 	void yyerror(const char*);
+	tree_node* make_tree_node();
+	child_list_node* make_child_list_node(tree_node*);
+	void add_child(tree_node*, tree_node*);
+
+	struct tree_node {
+		enum yytokentype type;
+		int line_no;
+		child_list_node *child_first_ptr;
+	};
+
+	struct child_list_node {
+		tree_node *tree_node;
+		child_list_node *next_child;
+	};
 %}
 %token	INT FLOAT CHAR ID TYPE STRUCT IF ELSE WHILE RETURN DOT SEMI COMMA NOT LC RC
 %right  ASSIGN
@@ -119,4 +137,25 @@ Args:
 
 void yyerror(const char* msg) {
 	fprintf(stderr, "%s", msg);
+}
+
+tree_node* make_tree_node(enum yytokentype type) {
+	tree_node* node = (tree_node*)malloc(sizeof(tree_node));
+	node->type = type;
+	node->line_no = yylineno;
+	node->child_first_ptr = (child_list_node*)NULL;
+	return node;
+}
+
+child_list_node* make_child_list_node(tree_node *tree_node) {
+	child_list_node *list_node = (child_list_node*)malloc(sizeof(child_list_node));
+	list_node->tree_node = tree_node;
+	list_node->next_child = (child_list_node*)NULL;
+	return list_node;
+}
+
+void add_child(tree_node *father, tree_node *child) {
+	child_list_node *new_child = make_child_list_node(child);
+	new_child->next_child = father->child_first_ptr;
+	father->child_first_ptr = new_child;
 }

@@ -2,7 +2,17 @@
 	#include "lex.yy.c"
 	void yyerror(const char*);
 %}
-%token INT FLOAT CHAR ID TYPE STRUCT IF ELSE WHILE RETURN DOT SEMI COMMA ASSIGN LT LE GT GE NE EQ PLUS MINUS MUL DIV AND OR NOT LP RP LB RB LC RC
+%token	INT FLOAT CHAR ID TYPE STRUCT IF ELSE WHILE RETURN DOT SEMI COMMA NOT LC RC
+%right  ASSIGN
+%left	OR
+%left	AND
+%left	LT LE GT GE EQ NE
+%left	PLUS MINUS
+%left	MUL DIV
+%right	NOT
+%left	LP RP LB RB DOT
+%left	ELSE
+
 %%
 Program:
 	  ExtDefList
@@ -16,7 +26,8 @@ ExtDef:
 	| Specifier FunDec CompSt
 	;
 ExtDecList:
-	  VarDec COMMA ExtDecList
+	  VarDec
+	| VarDec COMMA ExtDecList
 	;
 
 Specifier:
@@ -106,7 +117,6 @@ Args:
 
 %%
 
-void yyerror(const char* msg)
-{
+void yyerror(const char* msg) {
 	fprintf(stderr, "%s", msg);
 }

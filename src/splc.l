@@ -56,23 +56,3 @@ WHITE		{white}
 {ID}		{ printf("<ID, %s>\n", yytext); return ID; }
 <<EOF>>		{ printf("END OF THE FILE\n"); return 0; }
 .		{ printf("Unknown character\n"); return 0; }
-
-
-%%
-/* int main(int argc, char **argv) {
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
-		return 1;
-	} else if (argc == 2) {
-		if (!(yyin = fopen(argv[1], "r"))) {
-			perror(argv[1]);
-			return 1;
-		}
-		while(yylex());
-		return 0;
-	} else {
-		fputs("Too many arguments! Expected: 2\n", stderr);
-		return 1;
-	}
-
-} */

@@ -284,6 +284,11 @@ WHITE		{white}
 	yylval.tree_node = make_tree_node(str, 0, 1);
 	return ID; 
 }
+"//" {
+	char c;
+	while ((c = input()) != '\n');
+	// return 0;
+}
 <<EOF>> {
 #ifdef DEBUG
 	printf("END OF THE FILE\n"); 
@@ -291,8 +296,8 @@ WHITE		{white}
 	return 0; 
 }
 . {
-	printf("Unknown character\n");
-	return 0;
+	fprintf(stderr, "Error type A at Line %d: Mysterious %s\n", yylineno, yytext);
+	// return 0;
 }
 
 %%

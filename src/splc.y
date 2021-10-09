@@ -1,12 +1,14 @@
 %{
 	#include "lex.yy.c"
 	void yyerror(const char*);
+	int has_error = 0;
 %}
 %union {
 	struct tree_node *tree_node;
 }
 
-%token	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC
+%token	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC 
+%nonassoc <tree_node> INVALID
 %right  <tree_node>	ASSIGN
 %left	<tree_node>	OR
 %left	<tree_node>	AND
@@ -22,11 +24,13 @@
 /* %type	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF ELSE WHILE RETURN DOT SEMI COMMA NOT LC RC */
 
 %%
+/* high-level definition */
 Program: 
 	ExtDefList {
 		$$ = make_tree_node("Program", $1->line_no, 0);
 		add_child($$, $1);
-		show_tree($$, 0);
+		if (!has_error)
+			show_tree($$, 0);
 	}
 	;
 ExtDefList: {
@@ -56,6 +60,15 @@ ExtDef:
 		add_child($$, $2);
 		add_child($$, $1);
 	}
+	| Specifier error{
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+	}
+	| Specifier ExtDecList error {
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+	}
+	| error SEMI{
+		printf("Error type B at Line %d: Missing specifier\n", $2->line_no-1);
+	} 
 	;
 ExtDecList:
 	VarDec {
@@ -70,6 +83,7 @@ ExtDecList:
 	}
 	;
 
+/* specifier */
 Specifier:
 	TYPE {
 		$$ = make_tree_node("Specifier", $1->line_no, 0);
@@ -96,10 +110,16 @@ StructSpecifier:
 	}
 	;
 
+/* declarator */
 VarDec:
 	ID {
 		$$ = make_tree_node("VarDec", $1->line_no, 0);
 		add_child($$, $1);
+	}
+	| INVALID {
+		$$ = make_tree_node("VarDec", $1->line_no, 0);
+		add_child($$, $1);
+		has_error=1;
 	}
 	| VarDec LB INT RB {
 		$$ = make_tree_node("VarDec", $1->line_no, 0);
@@ -123,6 +143,12 @@ FunDec:
 		add_child($$, $2);
 		add_child($$, $1);
 	}
+	| ID LP VarList error    {
+        printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
+    | ID LP error    {
+        printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
 	;
 VarList:
 	ParamDec COMMA VarList {
@@ -135,6 +161,7 @@ VarList:
 		$$ = make_tree_node("VarList", $1->line_no, 0);
 		add_child($$, $1);
 	}
+	;
 ParamDec:
 	Specifier VarDec {
 		$$ = make_tree_node("ParamDec", $1->line_no, 0);
@@ -143,6 +170,7 @@ ParamDec:
 	}
 	;
 
+/* statement */
 CompSt:
 	LC DefList StmtList RC {
 		$$ = make_tree_node("CompSt", $1->line_no, 0);
@@ -203,10 +231,24 @@ Stmt:
 		add_child($$, $2);
 		add_child($$, $1);
 	}
+	| Exp error {
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+	}
+    | RETURN Exp error {
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+	}
+	| IF LP Exp error Stmt    { 
+        printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
+    | WHILE LP Exp error Stmt    {
+        printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
 	;
 
+/* local definition */
+
 DefList: {
-		$$ = NULL;
+		$$ = NULL; 
 	}
 	| Def DefList {
 		$$ = make_tree_node("DefList", $1->line_no, 0);
@@ -220,6 +262,12 @@ Def:
 		add_child($$, $3);
 		add_child($$, $2);
 		add_child($$, $1);
+	}
+	| Specifier DecList error{
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);	
+	}
+	| error DecList SEMI{
+		printf("Error type B at Line %d: Missing specifier\n",$2->line_no-1);
 	}
 	;
 DecList:
@@ -247,6 +295,7 @@ Dec:
 	}
 	;
 
+/* Expression */
 Exp:
 	Exp ASSIGN Exp {
 		$$ = make_tree_node("Exp", $1->line_no, 0);
@@ -384,6 +433,27 @@ Exp:
 		$$ = make_tree_node("Exp", $1->line_no, 0);
 		add_child($$, $1);
 	}
+	| Exp INVALID Exp {
+		has_error = 1;
+		$$ = make_tree_node("Exp", $1->line_no, 0);
+		add_child($$, $3);
+		add_child($$, $2);
+		add_child($$, $1);
+	}
+	| INVALID {
+		has_error = 1;
+		$$ = make_tree_node("Exp", $1->line_no, 0);
+		add_child($$, $1);
+	}
+	| LP Exp error{
+		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
+    | ID LP Args error{
+		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
+    | ID LP error{
+		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
+    }
 	;
 Args:
 	Exp COMMA Args {
@@ -401,7 +471,7 @@ Args:
 %%
 
 void yyerror(const char* msg) {
-	fprintf(stderr, "%s", msg);
+	has_error=1;
 }
 
 void show_tree(tree_node *node, int level) {

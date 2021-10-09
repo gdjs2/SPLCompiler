@@ -24,16 +24,23 @@
 %}
 
 %option yylineno
+digit 		[0-9]
 letter		[a-zA-Z]
 letter_		_|{letter}
 hex_integer	-?0x[0-9a-fA-F]*
 decimal_integer	-?(0|[1-9][0-9]*)
 float		-?[0-9]+\.[0-9]+
 char		'.'
+hex_char '\\[xX][0-9a-fA-F]{2}'
 id		{letter_}({letter_}|[0-9])*
 white		[\t\r ]
+invalid_dec    {digit}+
+invalid_hex    0(X|x)({digit}|{letter})*
+invalid_char   (''|'\\x({digit}|{letter})*')
+invalid_id     {digit}({letter}|{digit}|_)+
+lexical_err   ({invalid_dec}|{invalid_hex}|{invalid_char}|{invalid_id})
 
-INT		{hex_integer}|{decimal_integer}
+
 FLOAT		{float}
 CHAR		{char}
 ID		{id}
@@ -43,12 +50,32 @@ WHITE		{white}
 %%
 {WHITE} { }
 \n { }
-{INT} { 
+{decimal_integer} { 
 #ifdef DEBUG
 	printf("<INT, %s>\n", yytext);
 #endif
 	char *str = (char*)malloc(sizeof("INT: ") + strlen(yytext) + 1);
 	sprintf(str, "INT: %s", yytext);
+	yylval.tree_node = make_tree_node(str, 0, 1);
+	return INT; 
+}
+{hex_integer} {
+#ifdef DEBUG
+	printf("<INT, %s>\n", yytext);
+#endif
+	int val = 0;
+    int l = strlen(yytext), base = 1, dight;
+    for (int i = l - 1; i > 1; --i) {
+        char now = *(yytext + i);
+        if (now >= 'A')
+            dight = now - 'A' + 10;
+        else
+            dight = now - '0';
+        val += dight * base;
+        base *= 16;
+    }
+	char *str = (char*)malloc(4);
+    sprintf(str, "INT: %d", val);
 	yylval.tree_node = make_tree_node(str, 0, 1);
 	return INT; 
 }
@@ -61,6 +88,17 @@ WHITE		{white}
 	yylval.tree_node = make_tree_node(str, 0, 1);
 	return FLOAT; 
 }
+
+{hex_char} {
+#ifdef DEBUG
+	printf("<CHAR, %s>\n", yytext);
+#endif
+	char *str = (char*)malloc(sizeof("CHAR: ") + strlen(yytext) + 1);
+	sprintf(str, "CHAR: %s", yytext);
+	yylval.tree_node = make_tree_node(str, 0, 1);
+	return CHAR; 
+}
+
 {CHAR} {
 #ifdef DEBUG
 	printf("<CHAR, %s>\n", yytext);
@@ -295,9 +333,10 @@ WHITE		{white}
 #endif
 	return 0; 
 }
-. {
-	fprintf(stderr, "Error type A at Line %d: Mysterious %s\n", yylineno, yytext);
-	// return 0;
+
+{lexical_err}|. {
+	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+	return INVALID;
 }
 
 %%

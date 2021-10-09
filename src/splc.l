@@ -334,7 +334,6 @@ WHITE		{white}
 	return 0; 
 }
 
-
 {lexical_err}|. {
 	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
 	return INVALID;

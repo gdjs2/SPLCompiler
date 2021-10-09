@@ -24,6 +24,7 @@
 %}
 
 %option yylineno
+digit 		[0-9]
 letter		[a-zA-Z]
 letter_		_|{letter}
 hex_integer	-?0x[0-9a-fA-F]*
@@ -33,6 +34,13 @@ char		'.'
 hex_char '\\[xX][0-9a-fA-F]{2}'
 id		{letter_}({letter_}|[0-9])*
 white		[\t\r ]
+invalid_dec    {digit}+
+invalid_hex    0(X|x)({digit}|{letter})*
+invalid_char   (''|'\\x({digit}|{letter})*')
+invalid_id     {digit}({letter}|{digit}|_)+
+lexical_err   ({invalid_dec}|{invalid_hex}|{invalid_char}|{invalid_id})
+
+
 FLOAT		{float}
 CHAR		{char}
 ID		{id}
@@ -326,21 +334,8 @@ WHITE		{white}
 	return 0; 
 }
 
-0x{letter}* {
-	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
-	return INVALID;
-}
 
-0x({letter}|[0-9a-zA-Z])*  {
-	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
-	return INVALID;
-} 
-
-'\\[xX][0-9a-zA-Z]+' {
-	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
-	return INVALID;
-}
-. {
+{lexical_err}|. {
 	fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
 	return INVALID;
 }

@@ -59,6 +59,7 @@ ExtDef:
 		add_child($$, $2);
 		add_child($$, $1);
 	}
+	| Specifier ExtDecList error {puts("hello");}
 	;
 ExtDecList:
 	VarDec {

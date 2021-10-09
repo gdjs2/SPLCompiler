@@ -1,12 +1,14 @@
 %{
 	#include "lex.yy.c"
 	void yyerror(const char*);
+	int error = 0;
 %}
 %union {
 	struct tree_node *tree_node;
 }
 
-%token	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC
+%token	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC 
+%nonassoc <tree_node> INVALID
 %right  <tree_node>	ASSIGN
 %left	<tree_node>	OR
 %left	<tree_node>	AND
@@ -26,7 +28,8 @@ Program:
 	ExtDefList {
 		$$ = make_tree_node("Program", $1->line_no, 0);
 		add_child($$, $1);
-		show_tree($$, 0);
+		if (!error)
+			show_tree($$, 0);
 	}
 	;
 ExtDefList: {
@@ -203,10 +206,11 @@ Stmt:
 		add_child($$, $2);
 		add_child($$, $1);
 	}
+    |	RETURN Exp error {printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);}
 	;
 
 DefList: {
-		$$ = NULL;
+		$$ = NULL; 
 	}
 	| Def DefList {
 		$$ = make_tree_node("DefList", $1->line_no, 0);
@@ -384,6 +388,8 @@ Exp:
 		$$ = make_tree_node("Exp", $1->line_no, 0);
 		add_child($$, $1);
 	}
+	| Exp INVALID Exp {error = 1;}
+	| INVALID {error = 1;}
 	;
 Args:
 	Exp COMMA Args {

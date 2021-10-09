@@ -4,9 +4,9 @@ cnt = 0
 fail_list=[]
 for i in range(1,13):
     print('%d ----------------' %i)
-    os.system('mkdir -p ../tests/out/')
-    os.system('../bin/splc ../tests/stage1/test_1_r%02d.spl > ../tests/out/%d' % (i,i))
-    if os.system('diff ../tests/stage1/test_1_r%02d.out ../tests/out/%d' % (i,i)):
+    os.system('mkdir -p ../test/out/')
+    os.system('../bin/splc ../test/stage1/test_1_r%02d.spl > ../test/out/%d' % (i,i))
+    if os.system('diff ../test/stage1/test_1_r%02d.out ../test/out/%d' % (i,i)):
         fail_list.append(i)
     else:
         cnt=cnt+1   

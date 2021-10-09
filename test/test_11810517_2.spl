@@ -1,0 +1,6 @@
+int a;
+
+int test (){
+  int b = 0xFF;
+  c = 5;
+}

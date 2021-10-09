@@ -1,0 +1,9 @@
+float n(){
+    m();
+    return 1;
+}
+
+float m(){
+    n();
+    return 1;
+}

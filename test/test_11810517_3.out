@@ -1,0 +1,49 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: float
+      FunDec (1)
+        ID: n
+        LP
+        RP
+      CompSt (1)
+        LC
+        StmtList (2)
+          Stmt (2)
+            Exp (2)
+              ID: m
+              LP
+              RP
+            SEMI
+          StmtList (3)
+            Stmt (3)
+              RETURN
+              Exp (3)
+                INT: 1
+              SEMI
+        RC
+    ExtDefList (6)
+      ExtDef (6)
+        Specifier (6)
+          TYPE: float
+        FunDec (6)
+          ID: m
+          LP
+          RP
+        CompSt (6)
+          LC
+          StmtList (7)
+            Stmt (7)
+              Exp (7)
+                ID: n
+                LP
+                RP
+              SEMI
+            StmtList (8)
+              Stmt (8)
+                RETURN
+                Exp (8)
+                  INT: 1
+                SEMI
+          RC

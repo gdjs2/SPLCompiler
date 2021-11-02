@@ -71,7 +71,7 @@ ExtDef:
 	} 
 	;
 ExtDecList:
-	VarDec {
+	Dec {
 		$$ = make_tree_node("ExtDecList", $1->line_no, 0);
 		add_child($$, $1);
 	}

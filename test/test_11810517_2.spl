@@ -1,4 +1,4 @@
-int a;
+int a = 3;
 
 int test (){
   int b = 0xFF;

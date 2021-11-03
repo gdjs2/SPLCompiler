@@ -23,5 +23,5 @@ texical.o: .lex .syntax .bin
 
 clean:
 	@rm -f $(SRC_DIR)/lex.yy.c
-	@rm -f $(SRC_DIR)/splc.tab.c $(SRC_DIR)/splc.tab.h
+	@rm -f $(SRC_DIR)/splc.tab.cc $(SRC_DIR)/splc.tab.hh
 	@rm -rf ./bin

@@ -1,10 +1,11 @@
 %{
 	#include "splc.tab.hh"
 	#include "tree_node.h"
+	extern "C" int yylex();
 %}
 
 %option yylineno
-%option noyywrap
+
 digit 		[0-9]
 letter		[a-zA-Z]
 letter_		_|{letter}

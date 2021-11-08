@@ -4,6 +4,7 @@
 #include "tree_node.h"
 #include <string>
 #include <list>
+#include <cstring>
 
 typedef struct type_t {
 	char name[32];

@@ -2,5 +2,7 @@ int f() {}
 
 int main() {
 	// int x;
-	x = 3;
+	int x = 3;
+	f();
+	
 }

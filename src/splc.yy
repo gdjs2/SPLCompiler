@@ -5,6 +5,9 @@
 	#include <string>
 	#include <list>
 	#include <unordered_map>
+	#include <algorithm>
+	#include <cstring>
+
 	using std::map;
 	using std::string;
 	using std::pair;
@@ -200,7 +203,7 @@ ExtDef:
 		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
 	}
 	| error SEMI{
-		printf("Error type B at Line %d: Missing specifier\n", $2->line_no-1);
+		printf("Error type 2B at Line %d: Missing specifier\n", $2->line_no-1);
 	} 
 	;
 ExtDecList:
@@ -420,11 +423,11 @@ Def:
 #endif
 		
 	}
-	| Specifier DecList error{
+	| Specifier DecList error {
 		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);	
 	}
-	| error DecList SEMI{
-		printf("Error type B at Line %d: Missing specifier\n",$2->line_no-1);
+	| error DecList SEMI {
+		printf("Error type 2B at Line %d: Missing specifier\n",$2->line_no-1);
 	}
 	;
 DecList:

@@ -96,7 +96,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "src/splc.yy"
+#line 22 "src/splc.yy"
 
 	struct tree_node *tree_node;
 

@@ -75,6 +75,9 @@
 	#include <string>
 	#include <list>
 	#include <unordered_map>
+	#include <algorithm>
+	#include <cstring>
+
 	using std::map;
 	using std::string;
 	using std::pair;
@@ -86,7 +89,7 @@
 	map<string, func_t*> func_table;
 	map<string, type_t*> type_table;
 
-#line 90 "./src/splc.tab.cc"
+#line 93 "./src/splc.tab.cc"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -560,14 +563,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    42,    42,    49,    52,    59,    83,   127,   196,   199,
-     202,   207,   211,   221,   225,   231,   239,   248,   252,   257,
-     266,   273,   279,   282,   287,   293,   299,   308,   316,   319,
-     326,   331,   335,   341,   349,   359,   367,   370,   373,   376,
-     383,   386,   393,   423,   426,   431,   435,   443,   447,   457,
-     463,   469,   475,   481,   487,   493,   499,   505,   511,   517,
-     523,   529,   535,   541,   546,   551,   558,   569,   576,   582,
-     591,   595,   599,   603,   610,   615,   618,   621,   626,   632
+       0,    45,    45,    52,    55,    62,    86,   130,   199,   202,
+     205,   210,   214,   224,   228,   234,   242,   251,   255,   260,
+     269,   276,   282,   285,   290,   296,   302,   311,   319,   322,
+     329,   334,   338,   344,   352,   362,   370,   373,   376,   379,
+     386,   389,   396,   426,   429,   434,   438,   446,   450,   460,
+     466,   472,   478,   484,   490,   496,   502,   508,   514,   520,
+     526,   532,   538,   544,   549,   554,   561,   572,   579,   585,
+     594,   598,   602,   606,   613,   618,   621,   624,   629,   635
 };
 #endif
 
@@ -1272,36 +1275,36 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* Program: ExtDefList  */
-#line 42 "src/splc.yy"
+#line 45 "src/splc.yy"
                    {
 		(yyval.tree_node) = make_tree_node("Program", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		if (!has_error)
 			show_tree((yyval.tree_node), 0);
 	}
-#line 1283 "./src/splc.tab.cc"
+#line 1286 "./src/splc.tab.cc"
     break;
 
   case 3: /* ExtDefList: %empty  */
-#line 49 "src/splc.yy"
+#line 52 "src/splc.yy"
             {
 		(yyval.tree_node) = NULL;
 	}
-#line 1291 "./src/splc.tab.cc"
+#line 1294 "./src/splc.tab.cc"
     break;
 
   case 4: /* ExtDefList: ExtDef ExtDefList  */
-#line 52 "src/splc.yy"
+#line 55 "src/splc.yy"
                             {
 		(yyval.tree_node) = make_tree_node("ExtDefList", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1301 "./src/splc.tab.cc"
+#line 1304 "./src/splc.tab.cc"
     break;
 
   case 5: /* ExtDef: Specifier ExtDecList SEMI  */
-#line 59 "src/splc.yy"
+#line 62 "src/splc.yy"
                                   {
 		(yyval.tree_node) = make_tree_node("ExtDef", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1326,11 +1329,11 @@ yyreduce:
 		
 		
 	}
-#line 1330 "./src/splc.tab.cc"
+#line 1333 "./src/splc.tab.cc"
     break;
 
   case 6: /* ExtDef: Specifier SEMI  */
-#line 83 "src/splc.yy"
+#line 86 "src/splc.yy"
                          {
 		(yyval.tree_node) = make_tree_node("ExtDef", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1375,11 +1378,11 @@ yyreduce:
 		}
 #endif
 	}
-#line 1379 "./src/splc.tab.cc"
+#line 1382 "./src/splc.tab.cc"
     break;
 
   case 7: /* ExtDef: Specifier FunDec CompSt  */
-#line 127 "src/splc.yy"
+#line 130 "src/splc.yy"
                                   {
 		(yyval.tree_node) = make_tree_node("ExtDef", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1449,73 +1452,73 @@ yyreduce:
 #endif
 
 	}
-#line 1453 "./src/splc.tab.cc"
+#line 1456 "./src/splc.tab.cc"
     break;
 
   case 8: /* ExtDef: Specifier error  */
-#line 196 "src/splc.yy"
+#line 199 "src/splc.yy"
                          {
 		printf("Error type B at Line %d: Missing semicolon ';'\n",(yyvsp[-1].tree_node)->line_no);
 	}
-#line 1461 "./src/splc.tab.cc"
+#line 1464 "./src/splc.tab.cc"
     break;
 
   case 9: /* ExtDef: Specifier ExtDecList error  */
-#line 199 "src/splc.yy"
+#line 202 "src/splc.yy"
                                      {
 		printf("Error type B at Line %d: Missing semicolon ';'\n",(yyvsp[-2].tree_node)->line_no);
 	}
-#line 1469 "./src/splc.tab.cc"
+#line 1472 "./src/splc.tab.cc"
     break;
 
   case 10: /* ExtDef: error SEMI  */
-#line 202 "src/splc.yy"
+#line 205 "src/splc.yy"
                     {
-		printf("Error type B at Line %d: Missing specifier\n", (yyvsp[0].tree_node)->line_no-1);
+		printf("Error type 2B at Line %d: Missing specifier\n", (yyvsp[0].tree_node)->line_no-1);
 	}
-#line 1477 "./src/splc.tab.cc"
+#line 1480 "./src/splc.tab.cc"
     break;
 
   case 11: /* ExtDecList: Dec  */
-#line 207 "src/splc.yy"
+#line 210 "src/splc.yy"
             {
 		(yyval.tree_node) = make_tree_node("ExtDecList", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1486 "./src/splc.tab.cc"
+#line 1489 "./src/splc.tab.cc"
     break;
 
   case 12: /* ExtDecList: Dec COMMA ExtDecList  */
-#line 211 "src/splc.yy"
+#line 214 "src/splc.yy"
                                {
 		(yyval.tree_node) = make_tree_node("ExtDecList", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1497 "./src/splc.tab.cc"
+#line 1500 "./src/splc.tab.cc"
     break;
 
   case 13: /* Specifier: TYPE  */
-#line 221 "src/splc.yy"
+#line 224 "src/splc.yy"
              {
 		(yyval.tree_node) = make_tree_node("Specifier", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1506 "./src/splc.tab.cc"
+#line 1509 "./src/splc.tab.cc"
     break;
 
   case 14: /* Specifier: StructSpecifier  */
-#line 225 "src/splc.yy"
+#line 228 "src/splc.yy"
                           {
 		(yyval.tree_node) = make_tree_node("Specifier", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1515 "./src/splc.tab.cc"
+#line 1518 "./src/splc.tab.cc"
     break;
 
   case 15: /* StructSpecifier: STRUCT ID LC DefList RC  */
-#line 231 "src/splc.yy"
+#line 234 "src/splc.yy"
                                 {
 		(yyval.tree_node) = make_tree_node("StructSpecifier", (yyvsp[-4].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1524,40 +1527,40 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-4].tree_node));
 	}
-#line 1528 "./src/splc.tab.cc"
+#line 1531 "./src/splc.tab.cc"
     break;
 
   case 16: /* StructSpecifier: STRUCT ID  */
-#line 239 "src/splc.yy"
+#line 242 "src/splc.yy"
                     {
 		(yyval.tree_node) = make_tree_node("StructSpecifier", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1538 "./src/splc.tab.cc"
+#line 1541 "./src/splc.tab.cc"
     break;
 
   case 17: /* VarDec: ID  */
-#line 248 "src/splc.yy"
+#line 251 "src/splc.yy"
            {
 		(yyval.tree_node) = make_tree_node("VarDec", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1547 "./src/splc.tab.cc"
+#line 1550 "./src/splc.tab.cc"
     break;
 
   case 18: /* VarDec: INVALID  */
-#line 252 "src/splc.yy"
+#line 255 "src/splc.yy"
                   {
 		(yyval.tree_node) = make_tree_node("VarDec", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		has_error=1;
 	}
-#line 1557 "./src/splc.tab.cc"
+#line 1560 "./src/splc.tab.cc"
     break;
 
   case 19: /* VarDec: VarDec LB INT RB  */
-#line 257 "src/splc.yy"
+#line 260 "src/splc.yy"
                            {
 		(yyval.tree_node) = make_tree_node("VarDec", (yyvsp[-3].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1565,11 +1568,11 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 	}
-#line 1569 "./src/splc.tab.cc"
+#line 1572 "./src/splc.tab.cc"
     break;
 
   case 20: /* FunDec: ID LP VarList RP  */
-#line 266 "src/splc.yy"
+#line 269 "src/splc.yy"
                          {
 		(yyval.tree_node) = make_tree_node("FunDec", (yyvsp[-3].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1577,68 +1580,68 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 	}
-#line 1581 "./src/splc.tab.cc"
+#line 1584 "./src/splc.tab.cc"
     break;
 
   case 21: /* FunDec: ID LP RP  */
-#line 273 "src/splc.yy"
+#line 276 "src/splc.yy"
                    {
 		(yyval.tree_node) = make_tree_node("FunDec", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1592 "./src/splc.tab.cc"
+#line 1595 "./src/splc.tab.cc"
     break;
 
   case 22: /* FunDec: ID LP VarList error  */
-#line 279 "src/splc.yy"
+#line 282 "src/splc.yy"
                                  {
         	printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-3].tree_node)->line_no);
     	}
-#line 1600 "./src/splc.tab.cc"
+#line 1603 "./src/splc.tab.cc"
     break;
 
   case 23: /* FunDec: ID LP error  */
-#line 282 "src/splc.yy"
+#line 285 "src/splc.yy"
                          {
         	printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-2].tree_node)->line_no);
     	}
-#line 1608 "./src/splc.tab.cc"
+#line 1611 "./src/splc.tab.cc"
     break;
 
   case 24: /* VarList: ParamDec COMMA VarList  */
-#line 287 "src/splc.yy"
+#line 290 "src/splc.yy"
                                {
 		(yyval.tree_node) = make_tree_node("VarList", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1619 "./src/splc.tab.cc"
+#line 1622 "./src/splc.tab.cc"
     break;
 
   case 25: /* VarList: ParamDec  */
-#line 293 "src/splc.yy"
+#line 296 "src/splc.yy"
                    {
 		(yyval.tree_node) = make_tree_node("VarList", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1628 "./src/splc.tab.cc"
+#line 1631 "./src/splc.tab.cc"
     break;
 
   case 26: /* ParamDec: Specifier VarDec  */
-#line 299 "src/splc.yy"
+#line 302 "src/splc.yy"
                          {
 		(yyval.tree_node) = make_tree_node("ParamDec", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1638 "./src/splc.tab.cc"
+#line 1641 "./src/splc.tab.cc"
     break;
 
   case 27: /* CompSt: LC DefList StmtList RC  */
-#line 308 "src/splc.yy"
+#line 311 "src/splc.yy"
                                {
 		(yyval.tree_node) = make_tree_node("CompSt", (yyvsp[-3].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1646,59 +1649,59 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 	}
-#line 1650 "./src/splc.tab.cc"
+#line 1653 "./src/splc.tab.cc"
     break;
 
   case 28: /* StmtList: %empty  */
-#line 316 "src/splc.yy"
+#line 319 "src/splc.yy"
           {
 		(yyval.tree_node) = NULL;
 	}
-#line 1658 "./src/splc.tab.cc"
+#line 1661 "./src/splc.tab.cc"
     break;
 
   case 29: /* StmtList: Stmt StmtList  */
-#line 319 "src/splc.yy"
+#line 322 "src/splc.yy"
                         {
 		(yyval.tree_node) = make_tree_node("StmtList", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1668 "./src/splc.tab.cc"
+#line 1671 "./src/splc.tab.cc"
     break;
 
   case 30: /* Stmt: Exp SEMI  */
-#line 326 "src/splc.yy"
+#line 329 "src/splc.yy"
                  {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1678 "./src/splc.tab.cc"
+#line 1681 "./src/splc.tab.cc"
     break;
 
   case 31: /* Stmt: CompSt  */
-#line 331 "src/splc.yy"
+#line 334 "src/splc.yy"
                  {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1687 "./src/splc.tab.cc"
+#line 1690 "./src/splc.tab.cc"
     break;
 
   case 32: /* Stmt: RETURN Exp SEMI  */
-#line 335 "src/splc.yy"
+#line 338 "src/splc.yy"
                           {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1698 "./src/splc.tab.cc"
+#line 1701 "./src/splc.tab.cc"
     break;
 
   case 33: /* Stmt: IF LP Exp RP Stmt  */
-#line 341 "src/splc.yy"
+#line 344 "src/splc.yy"
                             {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[-4].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1707,11 +1710,11 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-4].tree_node));
 	}
-#line 1711 "./src/splc.tab.cc"
+#line 1714 "./src/splc.tab.cc"
     break;
 
   case 34: /* Stmt: IF LP Exp RP Stmt ELSE Stmt  */
-#line 349 "src/splc.yy"
+#line 352 "src/splc.yy"
                                       {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[-6].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1722,11 +1725,11 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-5].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-6].tree_node));
 	}
-#line 1726 "./src/splc.tab.cc"
+#line 1729 "./src/splc.tab.cc"
     break;
 
   case 35: /* Stmt: WHILE LP Exp RP Stmt  */
-#line 359 "src/splc.yy"
+#line 362 "src/splc.yy"
                                {
 		(yyval.tree_node) = make_tree_node("Stmt", (yyvsp[-4].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1735,61 +1738,61 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-4].tree_node));
 	}
-#line 1739 "./src/splc.tab.cc"
+#line 1742 "./src/splc.tab.cc"
     break;
 
   case 36: /* Stmt: Exp error  */
-#line 367 "src/splc.yy"
+#line 370 "src/splc.yy"
                     {
 		printf("Error type B at Line %d: Missing semicolon ';'\n",(yyvsp[-1].tree_node)->line_no);
 	}
-#line 1747 "./src/splc.tab.cc"
+#line 1750 "./src/splc.tab.cc"
     break;
 
   case 37: /* Stmt: RETURN Exp error  */
-#line 370 "src/splc.yy"
+#line 373 "src/splc.yy"
                            {
 			printf("Error type B at Line %d: Missing semicolon ';'\n",(yyvsp[-2].tree_node)->line_no);
 		}
-#line 1755 "./src/splc.tab.cc"
+#line 1758 "./src/splc.tab.cc"
     break;
 
   case 38: /* Stmt: IF LP Exp error Stmt  */
-#line 373 "src/splc.yy"
+#line 376 "src/splc.yy"
                                           { 
 		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-4].tree_node)->line_no);
 	}
-#line 1763 "./src/splc.tab.cc"
+#line 1766 "./src/splc.tab.cc"
     break;
 
   case 39: /* Stmt: WHILE LP Exp error Stmt  */
-#line 376 "src/splc.yy"
+#line 379 "src/splc.yy"
                                      {
 		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-4].tree_node)->line_no);
 	}
-#line 1771 "./src/splc.tab.cc"
+#line 1774 "./src/splc.tab.cc"
     break;
 
   case 40: /* DefList: %empty  */
-#line 383 "src/splc.yy"
+#line 386 "src/splc.yy"
          {
 		(yyval.tree_node) = NULL; 
 	}
-#line 1779 "./src/splc.tab.cc"
+#line 1782 "./src/splc.tab.cc"
     break;
 
   case 41: /* DefList: Def DefList  */
-#line 386 "src/splc.yy"
+#line 389 "src/splc.yy"
                       {
 		(yyval.tree_node) = make_tree_node("DefList", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 1789 "./src/splc.tab.cc"
+#line 1792 "./src/splc.tab.cc"
     break;
 
   case 42: /* Def: Specifier DecList SEMI  */
-#line 393 "src/splc.yy"
+#line 396 "src/splc.yy"
                                {
 		(yyval.tree_node) = make_tree_node("Def", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -1820,241 +1823,241 @@ yyreduce:
 #endif
 		
 	}
-#line 1824 "./src/splc.tab.cc"
+#line 1827 "./src/splc.tab.cc"
     break;
 
   case 43: /* Def: Specifier DecList error  */
-#line 423 "src/splc.yy"
-                                 {
+#line 426 "src/splc.yy"
+                                  {
 		printf("Error type B at Line %d: Missing semicolon ';'\n",(yyvsp[-2].tree_node)->line_no);	
 	}
-#line 1832 "./src/splc.tab.cc"
+#line 1835 "./src/splc.tab.cc"
     break;
 
   case 44: /* Def: error DecList SEMI  */
-#line 426 "src/splc.yy"
-                            {
-		printf("Error type B at Line %d: Missing specifier\n",(yyvsp[-1].tree_node)->line_no-1);
+#line 429 "src/splc.yy"
+                             {
+		printf("Error type 2B at Line %d: Missing specifier\n",(yyvsp[-1].tree_node)->line_no-1);
 	}
-#line 1840 "./src/splc.tab.cc"
+#line 1843 "./src/splc.tab.cc"
     break;
 
   case 45: /* DecList: Dec  */
-#line 431 "src/splc.yy"
+#line 434 "src/splc.yy"
             {
 		(yyval.tree_node) = make_tree_node("DecList", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1849 "./src/splc.tab.cc"
+#line 1852 "./src/splc.tab.cc"
     break;
 
   case 46: /* DecList: Dec COMMA DecList  */
-#line 435 "src/splc.yy"
+#line 438 "src/splc.yy"
                             {
 		(yyval.tree_node) = make_tree_node("DecList", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1860 "./src/splc.tab.cc"
+#line 1863 "./src/splc.tab.cc"
     break;
 
   case 47: /* Dec: VarDec  */
-#line 443 "src/splc.yy"
+#line 446 "src/splc.yy"
                {
 		(yyval.tree_node) = make_tree_node("Dec", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 1869 "./src/splc.tab.cc"
+#line 1872 "./src/splc.tab.cc"
     break;
 
   case 48: /* Dec: VarDec ASSIGN Exp  */
-#line 447 "src/splc.yy"
+#line 450 "src/splc.yy"
                             {
 		(yyval.tree_node) = make_tree_node("Dec", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1880 "./src/splc.tab.cc"
+#line 1883 "./src/splc.tab.cc"
     break;
 
   case 49: /* Exp: Exp ASSIGN Exp  */
-#line 457 "src/splc.yy"
+#line 460 "src/splc.yy"
                        {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1891 "./src/splc.tab.cc"
+#line 1894 "./src/splc.tab.cc"
     break;
 
   case 50: /* Exp: Exp AND Exp  */
-#line 463 "src/splc.yy"
+#line 466 "src/splc.yy"
                       {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1902 "./src/splc.tab.cc"
+#line 1905 "./src/splc.tab.cc"
     break;
 
   case 51: /* Exp: Exp OR Exp  */
-#line 469 "src/splc.yy"
+#line 472 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1913 "./src/splc.tab.cc"
+#line 1916 "./src/splc.tab.cc"
     break;
 
   case 52: /* Exp: Exp LT Exp  */
-#line 475 "src/splc.yy"
+#line 478 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1924 "./src/splc.tab.cc"
+#line 1927 "./src/splc.tab.cc"
     break;
 
   case 53: /* Exp: Exp LE Exp  */
-#line 481 "src/splc.yy"
+#line 484 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1935 "./src/splc.tab.cc"
+#line 1938 "./src/splc.tab.cc"
     break;
 
   case 54: /* Exp: Exp GT Exp  */
-#line 487 "src/splc.yy"
+#line 490 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1946 "./src/splc.tab.cc"
+#line 1949 "./src/splc.tab.cc"
     break;
 
   case 55: /* Exp: Exp GE Exp  */
-#line 493 "src/splc.yy"
+#line 496 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1957 "./src/splc.tab.cc"
+#line 1960 "./src/splc.tab.cc"
     break;
 
   case 56: /* Exp: Exp NE Exp  */
-#line 499 "src/splc.yy"
+#line 502 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1968 "./src/splc.tab.cc"
+#line 1971 "./src/splc.tab.cc"
     break;
 
   case 57: /* Exp: Exp EQ Exp  */
-#line 505 "src/splc.yy"
+#line 508 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1979 "./src/splc.tab.cc"
+#line 1982 "./src/splc.tab.cc"
     break;
 
   case 58: /* Exp: Exp PLUS Exp  */
-#line 511 "src/splc.yy"
+#line 514 "src/splc.yy"
                        {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 1990 "./src/splc.tab.cc"
+#line 1993 "./src/splc.tab.cc"
     break;
 
   case 59: /* Exp: Exp MINUS Exp  */
-#line 517 "src/splc.yy"
+#line 520 "src/splc.yy"
                         {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2001 "./src/splc.tab.cc"
+#line 2004 "./src/splc.tab.cc"
     break;
 
   case 60: /* Exp: Exp MUL Exp  */
-#line 523 "src/splc.yy"
+#line 526 "src/splc.yy"
                       {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2012 "./src/splc.tab.cc"
+#line 2015 "./src/splc.tab.cc"
     break;
 
   case 61: /* Exp: Exp DIV Exp  */
-#line 529 "src/splc.yy"
+#line 532 "src/splc.yy"
                       {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2023 "./src/splc.tab.cc"
+#line 2026 "./src/splc.tab.cc"
     break;
 
   case 62: /* Exp: LP Exp RP  */
-#line 535 "src/splc.yy"
+#line 538 "src/splc.yy"
                     {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2034 "./src/splc.tab.cc"
+#line 2037 "./src/splc.tab.cc"
     break;
 
   case 63: /* Exp: MINUS Exp  */
-#line 541 "src/splc.yy"
+#line 544 "src/splc.yy"
                     {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 2044 "./src/splc.tab.cc"
+#line 2047 "./src/splc.tab.cc"
     break;
 
   case 64: /* Exp: NOT Exp  */
-#line 546 "src/splc.yy"
+#line 549 "src/splc.yy"
                   {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-1].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 	}
-#line 2054 "./src/splc.tab.cc"
+#line 2057 "./src/splc.tab.cc"
     break;
 
   case 65: /* Exp: ID LP Args RP  */
-#line 551 "src/splc.yy"
+#line 554 "src/splc.yy"
                         {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-3].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -2062,11 +2065,11 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 	}
-#line 2066 "./src/splc.tab.cc"
+#line 2069 "./src/splc.tab.cc"
     break;
 
   case 66: /* Exp: ID LP RP  */
-#line 558 "src/splc.yy"
+#line 561 "src/splc.yy"
                    {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -2078,11 +2081,11 @@ yyreduce:
 			printf("Error type 2 at Line %d: function \"%s\" is not defined.\n", (yyvsp[-2].tree_node)->line_no, func_name);
 		}
 	}
-#line 2082 "./src/splc.tab.cc"
+#line 2085 "./src/splc.tab.cc"
     break;
 
   case 67: /* Exp: Exp LB Exp RB  */
-#line 569 "src/splc.yy"
+#line 572 "src/splc.yy"
                         {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-3].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -2090,22 +2093,22 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-3].tree_node));
 	}
-#line 2094 "./src/splc.tab.cc"
+#line 2097 "./src/splc.tab.cc"
     break;
 
   case 68: /* Exp: Exp DOT ID  */
-#line 576 "src/splc.yy"
+#line 579 "src/splc.yy"
                      {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2105 "./src/splc.tab.cc"
+#line 2108 "./src/splc.tab.cc"
     break;
 
   case 69: /* Exp: ID  */
-#line 582 "src/splc.yy"
+#line 585 "src/splc.yy"
              {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
@@ -2115,38 +2118,38 @@ yyreduce:
 			printf("Error type 1 at Line %d: variable \"%s\" is used without definition.\n", (yyvsp[0].tree_node)->line_no, var_name);
 		}
 	}
-#line 2119 "./src/splc.tab.cc"
+#line 2122 "./src/splc.tab.cc"
     break;
 
   case 70: /* Exp: INT  */
-#line 591 "src/splc.yy"
+#line 594 "src/splc.yy"
               {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 2128 "./src/splc.tab.cc"
+#line 2131 "./src/splc.tab.cc"
     break;
 
   case 71: /* Exp: FLOAT  */
-#line 595 "src/splc.yy"
+#line 598 "src/splc.yy"
                 {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 2137 "./src/splc.tab.cc"
+#line 2140 "./src/splc.tab.cc"
     break;
 
   case 72: /* Exp: CHAR  */
-#line 599 "src/splc.yy"
+#line 602 "src/splc.yy"
                {
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 2146 "./src/splc.tab.cc"
+#line 2149 "./src/splc.tab.cc"
     break;
 
   case 73: /* Exp: Exp INVALID Exp  */
-#line 603 "src/splc.yy"
+#line 606 "src/splc.yy"
                           {
 		has_error = 1;
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[-2].tree_node)->line_no, 0);
@@ -2154,65 +2157,65 @@ yyreduce:
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2158 "./src/splc.tab.cc"
+#line 2161 "./src/splc.tab.cc"
     break;
 
   case 74: /* Exp: INVALID  */
-#line 610 "src/splc.yy"
+#line 613 "src/splc.yy"
                   {
 		has_error = 1;
 		(yyval.tree_node) = make_tree_node("Exp", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 2168 "./src/splc.tab.cc"
+#line 2171 "./src/splc.tab.cc"
     break;
 
   case 75: /* Exp: LP Exp error  */
-#line 615 "src/splc.yy"
+#line 618 "src/splc.yy"
                       {
 		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-2].tree_node)->line_no);
 	}
-#line 2176 "./src/splc.tab.cc"
+#line 2179 "./src/splc.tab.cc"
     break;
 
   case 76: /* Exp: ID LP Args error  */
-#line 618 "src/splc.yy"
+#line 621 "src/splc.yy"
                           {
 			printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-3].tree_node)->line_no);
 	}
-#line 2184 "./src/splc.tab.cc"
+#line 2187 "./src/splc.tab.cc"
     break;
 
   case 77: /* Exp: ID LP error  */
-#line 621 "src/splc.yy"
+#line 624 "src/splc.yy"
                      {
 			printf("Error type B at Line %d: Missing closing parenthesis ')'\n",(yyvsp[-2].tree_node)->line_no);
 	}
-#line 2192 "./src/splc.tab.cc"
+#line 2195 "./src/splc.tab.cc"
     break;
 
   case 78: /* Args: Exp COMMA Args  */
-#line 626 "src/splc.yy"
+#line 629 "src/splc.yy"
                        {
 		(yyval.tree_node) = make_tree_node("Args", (yyvsp[-2].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-1].tree_node));
 		add_child((yyval.tree_node), (yyvsp[-2].tree_node));
 	}
-#line 2203 "./src/splc.tab.cc"
+#line 2206 "./src/splc.tab.cc"
     break;
 
   case 79: /* Args: Exp  */
-#line 632 "src/splc.yy"
+#line 635 "src/splc.yy"
               {
 		(yyval.tree_node) = make_tree_node("Args", (yyvsp[0].tree_node)->line_no, 0);
 		add_child((yyval.tree_node), (yyvsp[0].tree_node));
 	}
-#line 2212 "./src/splc.tab.cc"
+#line 2215 "./src/splc.tab.cc"
     break;
 
 
-#line 2216 "./src/splc.tab.cc"
+#line 2219 "./src/splc.tab.cc"
 
       default: break;
     }
@@ -2405,7 +2408,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 638 "src/splc.yy"
+#line 641 "src/splc.yy"
 
 
 void yyerror(const char* msg) {

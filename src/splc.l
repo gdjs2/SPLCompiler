@@ -4,6 +4,7 @@
 %}
 
 %option yylineno
+%option noyywrap
 digit 		[0-9]
 letter		[a-zA-Z]
 letter_		_|{letter}

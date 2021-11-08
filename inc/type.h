@@ -2,15 +2,17 @@
 #define __TYPE_H
 
 #include "tree_node.h"
+#include <string>
+#include <list>
 
 typedef struct type_t {
 	char name[32];
 	enum { PRIMITIVE, ARRAY, STRUCTURE } category;
-	union _ {
+	union data_t {
 		enum { ENUM_INT, ENUM_FLOAT, ENUM_CHAR } primitive;
 		struct array_t *array;
 		struct field_list_t *structure;
-	};
+	} data;
 } type_t;
 
 typedef struct array_t {
@@ -30,6 +32,11 @@ typedef struct field_list_t {
 	field_list_t *next;
 } field_list_t;
 
-void parse_specifier(tree_node* node);
+std::string parse_Specifier(tree_node*);
+std::list<std::string> parse_ExtDecList(tree_node*);
+std::list<std::string> parse_DecList(tree_node*);
+std::list<std::pair<std::string, std::list<std::string>>> parse_DefList(tree_node*);
+std::list<std::pair<std::string, std::string>> parse_VarList(tree_node*);
+
 
 #endif

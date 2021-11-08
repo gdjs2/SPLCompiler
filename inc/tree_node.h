@@ -13,11 +13,12 @@ struct tree_node {
 	const char *name;
 	int line_no;
 	int is_terminate;
+	int children_number;
 	child_list_node *child_first_ptr;
 };
 
 struct child_list_node {
-	tree_node *tree_node;
+	tree_node *node;
 	child_list_node *next_child;
 };
 

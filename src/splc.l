@@ -304,8 +304,7 @@ WHITE		{white}
 }
 "//" {
 	char c;
-	while ((c = getchar()) != '\n');
-	// return 0;
+	while ((c = yyinput()) != '\n');
 }
 <<EOF>> {
 #ifdef DEBUG

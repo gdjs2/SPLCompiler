@@ -12,3 +12,4 @@
 - [ ] Struct definition members type structural check
 - [ ] Struct definition members name check (corresponding to scope)
 - [ ] Function void return type
+- [ ] Add all function parameters 

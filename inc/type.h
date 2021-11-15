@@ -39,5 +39,6 @@ std::list<std::string> parse_DecList(tree_node*);
 std::list<std::pair<std::string, std::list<std::string>>> parse_DefList(tree_node*);
 std::list<std::pair<std::string, std::string>> parse_VarList(tree_node*);
 
+bool type_is_equal(const type_t*, const type_t*);
 
 #endif

@@ -1,4 +1,5 @@
 #include "type.h"
+#include <algorithm>
 
 std::string parse_Specifier(tree_node *specifier_node) {
 	if (!strcmp(specifier_node->child_first_ptr->node->name, "StructSpecifier")) {
@@ -97,4 +98,42 @@ std::list<std::pair<std::string, std::string>> parse_VarList(tree_node *var_list
 		else break;
 	}
 	return var_list;
+}
+
+static inline bool field_is_equal(const field_list_t *lhs, const field_list_t *rhs) {
+	std::list<type_t*> type_list;
+	while (lhs) {
+		type_list.push_back(lhs->type);
+		lhs = lhs->next;
+	}
+	while (rhs) {
+		if (type_list.empty()) {
+			return false;
+		}
+		auto it = std::find_if(type_list.begin(), type_list.end(), 
+			[&rhs](type_t *t) { return type_is_equal(t, rhs->type); });
+		if (it == type_list.end()) {
+			return false;
+		}
+		type_list.erase(it);
+		rhs = rhs->next;
+	}
+	return type_list.empty() && rhs != nullptr;
+}
+
+bool type_is_equal(const type_t *lhs, const type_t *rhs) {
+	if (lhs->category != rhs->category) {
+		return false;
+	}
+	if (lhs->category == type_t::PRIMITIVE) {
+		return lhs->data.primitive == rhs->data.primitive;
+	}
+	if (lhs->category == type_t::ARRAY) {
+		return type_is_equal(lhs->data.array->base, rhs->data.array->base) 
+			&& lhs->data.array->size == rhs->data.array->size;
+	}
+	if (lhs->category == type_t::STRUCTURE) {
+		return field_is_equal(lhs->data.structure, rhs->data.structure);
+	}
+	__builtin_unreachable();
 }

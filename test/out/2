@@ -4,8 +4,9 @@ Program (1)
       Specifier (1)
         TYPE: int
       ExtDecList (1)
-        VarDec (1)
-          ID: global
+        Dec (1)
+          VarDec (1)
+            ID: global
       SEMI
     ExtDefList (2)
       ExtDef (2)

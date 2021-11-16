@@ -28,5 +28,20 @@
     "directory": "/Users/gdjs2/Desktop/CS323/SPLCompiler",
     "file": "/Users/gdjs2/Desktop/CS323/SPLCompiler/./src/tree_node.cpp",
     "output": "/Users/gdjs2/Desktop/CS323/SPLCompiler/./bin/splc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++11",
+      "-Iinc",
+      "-I/usr/local/opt/flex/include",
+      "-o",
+      "./bin/splc",
+      "./src/type.cpp"
+    ],
+    "directory": "/Users/gdjs2/Desktop/CS323/SPLCompiler",
+    "file": "/Users/gdjs2/Desktop/CS323/SPLCompiler/./src/type.cpp",
+    "output": "/Users/gdjs2/Desktop/CS323/SPLCompiler/./bin/splc"
   }
 ]

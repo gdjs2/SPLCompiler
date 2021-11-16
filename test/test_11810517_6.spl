@@ -1,8 +1,9 @@
-int f() {}
+struct st {
+	int f[10];
+	int x;
+};
 
 int main() {
-	// int x;
-	int x = 3;
-	f();
-	
+	struct st s;
+	s.f[5] = 20;
 }

@@ -154,7 +154,16 @@ ExtDef:
 			}
 		});
 		ptr->data.structure = head;
+		// bool is_valid = true;
+		// std::for_each(type_table.begin(), type_table.end(), [&](type_t* type) {
+		// 	if (type_is_equal(type, ptr)) {
+		// 		printf("Error type 15 at Line %d: redefine the same structure type\n", $1->line_no);
+		// 		is_valid = false;
+		// 	}
+		// });
+		// if (is_valid) {
 		type_table.insert({struct_name, ptr});
+		// }
 #ifdef DEBUG
 		printf("INSERTED [%s, 0x%lx]", struct_name.c_str(), (long)ptr);
 		printf("Find user-defined struct: %s:\n", struct_name.c_str());

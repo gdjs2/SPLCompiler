@@ -27,6 +27,7 @@ var_info_list parse_ExtDecList(tree_node *ext_dec_list_node) {
 		bool is_array = false;
 		int length = 0;
 		std::string var_name;
+		tree_node *exp_node = nullptr;
 		// if single variable
 		if (ext_dec_list_node
 			->child_first_ptr->node
@@ -38,6 +39,16 @@ var_info_list parse_ExtDecList(tree_node *ext_dec_list_node) {
 						->child_first_ptr->node
 						->child_first_ptr->node
 						->name+4);
+				if (ext_dec_list_node
+				->child_first_ptr->node
+				->child_first_ptr
+				->next_child
+				) {
+					exp_node = ext_dec_list_node->child_first_ptr->node
+						->child_first_ptr
+						->next_child
+						->next_child->node;
+				}
 			}
 		else {
 			is_array = true;
@@ -55,7 +66,7 @@ var_info_list parse_ExtDecList(tree_node *ext_dec_list_node) {
 					->next_child
 					->node->name+5);
 		}
-		var_list.push_back({var_name, is_array, length});
+		var_list.push_back({var_name, is_array, length, exp_node});
 		if (ext_dec_list_node->child_first_ptr->next_child) {
 			ext_dec_list_node = ext_dec_list_node->child_first_ptr
 					->next_child
@@ -72,6 +83,7 @@ var_info_list parse_DecList(tree_node *dec_list_node) {
 		std::string var_name;
 		bool is_array = false;
 		int length = 0;
+		tree_node *exp_node = nullptr;
 
 		if (dec_list_node
 		->child_first_ptr->node
@@ -97,8 +109,18 @@ var_info_list parse_DecList(tree_node *dec_list_node) {
 				->child_first_ptr->node
 				->child_first_ptr->node
 				->name+4);
+			if (dec_list_node
+			->child_first_ptr->node
+			->child_first_ptr
+			->next_child
+			) {
+				exp_node = dec_list_node->child_first_ptr->node
+					->child_first_ptr
+					->next_child
+					->next_child->node;
+			}
 		}
-		var_list.push_back({var_name, is_array, length});
+		var_list.push_back({var_name, is_array, length, exp_node});
 
 		if (dec_list_node->child_first_ptr->next_child) {
 			dec_list_node = dec_list_node->child_first_ptr

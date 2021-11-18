@@ -1,3 +1,5 @@
+int sss='C';
+
 struct st {
 	int x;
 };
@@ -9,5 +11,8 @@ struct st2 {
 int main() {
 	struct st s1;
 	struct st2 s2;
+	int z = 3;
+
 	s1 = s2;
+	
 }

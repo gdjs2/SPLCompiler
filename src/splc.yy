@@ -83,20 +83,25 @@ ExtDef:
 		});
 #endif
 		if (type_table.count(type_name)) {
+			type_t *type = type_table[type_name];
 			std::for_each(var_name_list.begin(), var_name_list.end(), [&](const var_info_entry entry) { 
 				string var_name = std::get<0>(entry);
 				bool is_array = std::get<1>(entry);
 				int length = std::get<2>(entry);
+				tree_node *exp_node = std::get<3>(entry);
 				if (var_table.count(var_name)) {
 					printf("Error type 2 at Line %d: variable \"%s\" is redefined.\n", $1->line_no, var_name.c_str());
 				} else {
 					if (is_array) {
 						if (length < 0) {
-							printf("Error type 21 at Line %d: the length of array is less than 0\n", $1->line_no);
+							printf("Error type 21 at Line %d: the length of array is less than 0.\n", $1->line_no);
 						} else {
 							var_table.insert({var_name, insert_array_type(type_name.c_str(), length)});
 						}
 					} else {
+						if (exp_node != nullptr && find_type_in_value_node(find_first_right_value_node(exp_node)) != type) {
+							printf("Error type 5 at Line %d: unmatching types appear at both sides of the assignment operator\n", $2->line_no);
+						}
 						var_table.insert({var_name, type_name});
 					}
 					
@@ -163,7 +168,9 @@ ExtDef:
 			std::for_each(type_table.begin(), type_table.end(), [&](pair<string, type_t*> p) {
 				type_t *type = p.second;
 				if (is_valid && type_is_equal(type, ptr)) {
+#ifdef DEBUG
 					printf("Find the same structure: %s\n", type->name);
+#endif
 					is_valid = false;
 					ptr = type;
 				}
@@ -520,10 +527,12 @@ Def:
 		}
 		// check names
 		var_info_list var_name_list = parse_DecList($2);
+		type_t *type = type_table[type_name];
 		std::for_each(var_name_list.begin(), var_name_list.end(), [&](const var_info_entry entry) { 
 			string var_name = std::get<0>(entry);
 			bool is_array = std::get<1>(entry);
 			int length = std::get<2>(entry);
+			tree_node *exp_node = std::get<3>(entry);
 			if (var_table.count(var_name)) {
 				printf("Error type 3 at Line %d: variable \"%s\" is redefined.\n", $1->line_no, var_name.c_str());
 			} else if (is_valid) {
@@ -534,6 +543,9 @@ Def:
 						var_table.insert({var_name, insert_array_type(type_name.c_str(), length)});
 					}
 				} else {
+					if (exp_node != nullptr && find_type_in_value_node(find_first_right_value_node(exp_node)) != type) {
+						printf("Error type 5 at Line %d: unmatching types appear at both sides of the assignment operator\n", $2->line_no);
+					}
 					var_table.insert({var_name, type_name});
 				}
 			}

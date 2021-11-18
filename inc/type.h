@@ -7,7 +7,7 @@
 #include <cstring>
 #include <tuple>
 
-typedef std::tuple<std::string, bool, int> var_info_entry;
+typedef std::tuple<std::string, bool, int, tree_node*> var_info_entry;
 typedef std::list<var_info_entry> var_info_list;
 typedef std::list<std::pair<std::string, var_info_list>> dec_list;
 typedef std::pair<std::string, var_info_list> dec_entry;

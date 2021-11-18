@@ -9,9 +9,9 @@
 digit 		[0-9]
 letter		[a-zA-Z]
 letter_		_|{letter}
-hex_integer	-?0x[0-9a-fA-F]*
-decimal_integer	-?(0|[1-9][0-9]*)
-float		-?[0-9]+\.[0-9]+
+hex_integer	0x[0-9a-fA-F]*
+decimal_integer	(0|[1-9][0-9]*)
+float		[0-9]+\.[0-9]+
 char		'.'
 hex_char '\\[xX][0-9a-fA-F]{2}'
 id		{letter_}({letter_}|[0-9])*

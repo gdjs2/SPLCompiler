@@ -28,7 +28,8 @@
 	struct tree_node *tree_node;
 }
 
-%token	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC 
+%type	<tree_node>	Program ExtDefList ExtDef ExtDecList Specifier StructSpecifier VarDec FunDec VarList ParamDec CompSt StmtList Stmt DefList Def DecList Dec Exp Args 
+%token	<tree_node>	INT FLOAT CHAR TYPE STRUCT IF WHILE RETURN SEMI COMMA LC RC
 %nonassoc <tree_node> INVALID
 %right  <tree_node>	ASSIGN
 %left	<tree_node>	OR
@@ -37,10 +38,11 @@
 %left	<tree_node>	PLUS MINUS
 %left	<tree_node>	MUL DIV
 %right	<tree_node>	NOT
-%left	<tree_node>	LP RP LB RB DOT
+%left	<tree_node>	LP RP LB RB
+%left	<tree_node> 	ID DOT
 %left	<tree_node>	ELSE
 
-%type	<tree_node>	Program ExtDefList ExtDef ExtDecList Specifier StructSpecifier VarDec FunDec VarList ParamDec CompSt StmtList Stmt DefList Def DecList Dec Exp Args 
+
 
 /* %type	<tree_node>	INT FLOAT CHAR ID TYPE STRUCT IF ELSE WHILE RETURN DOT SEMI COMMA NOT LC RC */
 
@@ -154,16 +156,20 @@ ExtDef:
 			}
 		});
 		ptr->data.structure = head;
-		// bool is_valid = true;
-		// std::for_each(type_table.begin(), type_table.end(), [&](type_t* type) {
-		// 	if (type_is_equal(type, ptr)) {
-		// 		printf("Error type 15 at Line %d: redefine the same structure type\n", $1->line_no);
-		// 		is_valid = false;
-		// 	}
-		// });
-		// if (is_valid) {
-		type_table.insert({struct_name, ptr});
-		// }
+		if (type_table.count(struct_name)) {
+			printf("Error type 15 at Line %d: redefine the structure type with same name\n", $1->line_no);
+		} else {
+			bool is_valid = true;
+			std::for_each(type_table.begin(), type_table.end(), [&](pair<string, type_t*> p) {
+				type_t *type = p.second;
+				if (is_valid && type_is_equal(type, ptr)) {
+					printf("Find the same structure: %s\n", type->name);
+					is_valid = false;
+					ptr = type;
+				}
+			});
+			type_table.insert({struct_name, ptr});
+		}
 #ifdef DEBUG
 		printf("INSERTED [%s, 0x%lx]", struct_name.c_str(), (long)ptr);
 		printf("Find user-defined struct: %s:\n", struct_name.c_str());
@@ -220,10 +226,10 @@ ExtDef:
 
 	}
 	| Specifier error{
-		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+		printf("Error type B at Line %d: Missing semicolon 1';'\n",$1->line_no);
 	}
 	| Specifier ExtDecList error {
-		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+		printf("Error type B at Line %d: Missing semicolon 2';'\n",$1->line_no);
 	}
 	| error SEMI{
 		printf("Error type 2B at Line %d: Missing specifier\n", $2->line_no-1);
@@ -475,12 +481,12 @@ Stmt:
 		add_child($$, $1);
 	}
 	| Exp error {
-		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+		printf("Error type B at Line %d: Missing semicolon 3';'\n",$1->line_no);
 	}
 	| RETURN Exp error {
-			printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
-		}
-		| IF LP Exp error Stmt    { 
+		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);
+	}
+	| IF LP Exp error Stmt    { 
 		printf("Error type B at Line %d: Missing closing parenthesis ')'\n",$1->line_no);
 	}
 	| WHILE LP Exp error Stmt    {
@@ -541,7 +547,7 @@ Def:
 #endif
 	}
 	| Specifier DecList error {
-		printf("Error type B at Line %d: Missing semicolon ';'\n",$1->line_no);	
+		printf("Error type B at Line %d: Missing semicolon 4';'\n",$1->line_no);	
 	}
 	| error DecList SEMI {
 		printf("Error type 2B at Line %d: Missing specifier\n",$2->line_no-1);
@@ -576,7 +582,6 @@ Dec:
 Exp:
 	Exp ASSIGN Exp {
 
-		
 		// single varible on the left
 		if (find_all_left_value_node($1).size() == 1) {
 			type_t *var_type = find_type_in_value_node(find_first_left_value_node($1));
@@ -841,7 +846,19 @@ Exp:
 			printf("Error type 9 at Line %d: the arguments' number does not match, expect: %d, actual: %d\n", $1->line_no, func_table[func_name]->args_num, 0);
 		}
 	}
+	| Exp DOT ID %prec DOT {
+#ifdef DEBUG
+		printf("Reduce DOT\n");
+#endif
+		$$ = make_tree_node("Exp", $1->line_no, 0);
+		add_child($$, $3);
+		add_child($$, $2);
+		add_child($$, $1);
+	}
 	| Exp LB Exp RB {
+#ifdef DEBUG
+		printf("Reduce []\n");
+#endif
 		if (find_all_left_value_node($1).size() != 1) {
 			printf("Error type 10 at Line %d: apply index operator on non-array type\n", $1->line_no);
 		} else {
@@ -856,12 +873,6 @@ Exp:
 		}
 		$$ = make_tree_node("Exp", $1->line_no, 0);
 		add_child($$, $4);
-		add_child($$, $3);
-		add_child($$, $2);
-		add_child($$, $1);
-	}
-	| Exp DOT ID {
-		$$ = make_tree_node("Exp", $1->line_no, 0);
 		add_child($$, $3);
 		add_child($$, $2);
 		add_child($$, $1);
@@ -991,7 +1002,7 @@ type_t* parse_instance_type_in_struct(struct_var_list list, int line_no) {
 }
 
 type_t *find_type_in_value_node(tree_node *leaf, bool &is_left) {
-	type_t *leaf_type;
+	type_t *leaf_type = 0;
 	if (!leaf) return 0;
 	if (!memcmp(leaf->name, "INT", 3)) {
 		leaf_type = type_table["int"];
@@ -1010,7 +1021,10 @@ type_t *find_type_in_value_node(tree_node *leaf, bool &is_left) {
 		is_left = false;
 	} else if (!memcmp(leaf->name, "Exp", 3) && !strcmp(leaf->child_first_ptr->next_child->node->name, "LB")) {
 		struct_var_list list = parse_Struct_Exp(leaf->child_first_ptr->node);
-		leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
+		type_t *array_type = parse_instance_type_in_struct(list, leaf->line_no);
+		if (array_type->category == type_t::ARRAY) {
+			leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
+		}
 		is_left = true;
 	} else {
 		leaf_type = type_table[var_table[leaf->name+4]];
@@ -1020,7 +1034,8 @@ type_t *find_type_in_value_node(tree_node *leaf, bool &is_left) {
 }
 
 type_t *find_type_in_value_node(tree_node *leaf) {
-	type_t *leaf_type;
+	type_t *leaf_type = 0;
+	if (!leaf) return 0;
 	if (!memcmp(leaf->name, "INT", 3)) {
 		leaf_type = type_table["int"];
 	} else if (!memcmp(leaf->name, "CHAR", 4)) {
@@ -1036,7 +1051,10 @@ type_t *find_type_in_value_node(tree_node *leaf) {
 		} else leaf_type = func_entry->ret_type;
 	} else if (!memcmp(leaf->name, "Exp", 3) && !strcmp(leaf->child_first_ptr->next_child->node->name, "LB")) {
 		struct_var_list list = parse_Struct_Exp(leaf->child_first_ptr->node);
-		leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
+		type_t *array_type = parse_instance_type_in_struct(list, leaf->line_no);
+		if (array_type->category == type_t::ARRAY) {
+			leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
+		}
 	} else {
 		leaf_type = type_table[var_table[leaf->name+4]];
 	}

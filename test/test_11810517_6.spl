@@ -1,9 +1,13 @@
 struct st {
-	int f[10];
 	int x;
 };
 
+struct st2 {
+	int y;
+};
+
 int main() {
-	struct st s;
-	s.f[5] = 20;
+	struct st s1;
+	struct st2 s2;
+	s1 = s2;
 }

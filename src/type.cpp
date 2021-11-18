@@ -165,14 +165,14 @@ static inline bool field_is_equal(const field_list_t *lhs, const field_list_t *r
 			return false;
 		}
 		auto it = std::find_if(type_list.begin(), type_list.end(), 
-			[&rhs](type_t *t) { return type_is_equal(t, rhs->type); });
+			[&rhs](type_t *t) { return t == rhs->type; });
 		if (it == type_list.end()) {
 			return false;
 		}
 		type_list.erase(it);
 		rhs = rhs->next;
 	}
-	return type_list.empty() && rhs != nullptr;
+	return type_list.empty() && rhs == nullptr;
 }
 
 bool type_is_equal(const type_t *lhs, const type_t *rhs) {

@@ -1,0 +1,16 @@
+struct st {
+	char a;
+};
+
+struct st2 {
+	struct st b;
+};
+
+struct st3 {
+	struct st2 c;
+};
+
+int main() {
+	struct st3 s;
+	s.c.b.a = 10;
+}

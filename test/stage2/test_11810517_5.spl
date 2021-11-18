@@ -1,0 +1,12 @@
+int f(int x) {
+	return 1;
+}
+
+int f(int x) {
+	return x;
+}
+
+int main() {
+	f(1);
+	f(2);
+}

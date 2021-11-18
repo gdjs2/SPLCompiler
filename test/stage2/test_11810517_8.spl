@@ -1,0 +1,9 @@
+struct st {
+	int x;
+};
+
+struct st f(int z) {
+	struct st s;
+	if (z == 1) return s;
+	else return s.x;
+}

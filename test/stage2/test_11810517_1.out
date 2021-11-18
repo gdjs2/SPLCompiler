@@ -1,0 +1,2 @@
+Error type 1 at Line 7: variable "z" is used without definition.
+Error type 5 at Line 7: unmatching types appear at both sides of the assignment operator

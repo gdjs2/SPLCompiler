@@ -1,0 +1,10 @@
+int compare1(int x) {
+	return 1;
+}
+
+int main() {
+	int a, b, c = 10;
+	
+	compare(3);
+	return 1;
+}

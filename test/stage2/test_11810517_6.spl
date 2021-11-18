@@ -1,0 +1,21 @@
+struct st {
+	int x;
+};
+
+struct st1 {
+	struct st s1;
+	int y;
+};
+
+struct st2 {
+	struct st s2[10];
+	int z;
+};
+
+int main() {
+	struct st2 ss2;
+	struct st1 ss1;
+	ss2.s2[5] = ss1.s1;
+	ss2.z = ss1.y;
+	ss2.s2[8] = 5;
+}

@@ -1,0 +1,10 @@
+struct st {
+	int x;
+};
+
+char c = 'C';
+
+int main() {
+	struct st s[20];
+	s[c].x = 20;
+}

@@ -18,9 +18,13 @@
 	type_t* parse_instance_type_in_struct(struct_var_list, int);
 	type_t *find_type_in_value_node(tree_node *leaf);
 	type_t *find_type_in_value_node(tree_node *leaf, bool &is_left);
+	map<pair<string, int>, string>::iterator find_var_in_table(string var_name);
+
 
 	int has_error = 0;
-	map<string, string> var_table;
+	int scope = 0;
+	bool scope_flag = false;
+	map<pair<string, int>, string> var_table;
 	map<string, func_t*> func_table;
 	map<string, type_t*> type_table;
 %}
@@ -89,20 +93,20 @@ ExtDef:
 				bool is_array = std::get<1>(entry);
 				int length = std::get<2>(entry);
 				tree_node *exp_node = std::get<3>(entry);
-				if (var_table.count(var_name)) {
+				if (var_table.count({var_name, scope})) {
 					printf("Error type 2 at Line %d: variable \"%s\" is redefined.\n", $1->line_no, var_name.c_str());
 				} else {
 					if (is_array) {
 						if (length < 0) {
 							printf("Error type 21 at Line %d: the length of array is less than 0.\n", $1->line_no);
 						} else {
-							var_table.insert({var_name, insert_array_type(type_name.c_str(), length)});
+							var_table.insert({{var_name, scope}, insert_array_type(type_name.c_str(), length)});
 						}
 					} else {
-						if (exp_node != nullptr && find_type_in_value_node(find_first_right_value_node(exp_node)) != type) {
+						if (exp_node != nullptr && !type_is_equal(find_type_in_value_node(find_first_right_value_node(exp_node)), type)) {
 							printf("Error type 5 at Line %d: unmatching types appear at both sides of the assignment operator\n", $2->line_no);
 						}
-						var_table.insert({var_name, type_name});
+						var_table.insert({{var_name, scope}, type_name});
 					}
 					
 				}
@@ -172,7 +176,6 @@ ExtDef:
 					printf("Find the same structure: %s\n", type->name);
 #endif
 					is_valid = false;
-					ptr = type;
 				}
 			});
 			type_table.insert({struct_name, ptr});
@@ -229,7 +232,13 @@ ExtDef:
 
 		});
 
-		// check name
+		for (auto it = var_table.begin(); it != var_table.end(); ) {
+			auto const& [var_name, var_scope] = (*it).first;
+			if (scope == var_scope) it = var_table.erase(it);
+			else ++it;
+		}
+		scope_flag = false;
+		scope--;
 
 	}
 	| Specifier error{
@@ -268,6 +277,14 @@ Specifier:
 	;
 StructSpecifier:
 	STRUCT ID LC DefList RC {
+		for (auto it = var_table.begin(); it != var_table.end(); ) {
+			auto const& [var_name, var_scope] = (*it).first;
+			if (scope == var_scope) it = var_table.erase(it);
+			else ++it;
+		}
+		scope_flag = false;
+		scope--;
+
 		$$ = make_tree_node("StructSpecifier", $1->line_no, 0);
 		add_child($$, $5);
 		add_child($$, $4);
@@ -303,6 +320,9 @@ VarDec:
 	;
 FunDec:
 	ID LP VarList RP {
+		++scope;
+		scope_flag = true;
+
 		func_t *func = new func_t();
 		string func_name = $1->name+4;
 		if (func_table.count(func_name)) {
@@ -317,7 +337,7 @@ FunDec:
 			string para_name = var.second;
 			if (!type_table.count(para_type_name)) {
 				printf("Error type 16 at Line %d: type \"%s\" is not defined.\n", $2->line_no, para_type_name.c_str());
-			} if (var_table.count(para_name)) {
+			} if (var_table.count({para_name, scope})) {
 				printf("Error type 2 at Line %d: variable \"%s\" is redefined.\n", $2->line_no, para_name.c_str());
 			} else {
 				field_list_t *new_node = new field_list_t();
@@ -327,7 +347,7 @@ FunDec:
 				if (!head) head = tail = new_node;
 				else tail->next = new_node, tail = new_node;
 
-				var_table.insert({para_name, para_type_name});
+				var_table.insert({{para_name, scope}, para_type_name});
 			}
 		});
 		
@@ -351,6 +371,9 @@ FunDec:
 	| ID LP RP {
 		func_t *func = new func_t();
 		string func_name = $1->name+4;
+		if (func_table.count(func_name)) {
+			printf("Error Type 4 at Line %d: function \"%s\" is redefined.\n", $2->line_no, func_name.c_str());
+		}
 		func->args_num = 0;
 		func_table.insert({func_name, func});
 
@@ -398,6 +421,12 @@ ParamDec:
 /* statement */
 CompSt:
 	LC DefList StmtList RC {
+		// std::remove_if(var_table.begin(), var_table.end(), [&](const auto &entry) -> bool {
+		// 	int var_scope = entry.first.second;
+		// 	if (scope == var_scope) return true;
+		// 	return false;
+		// });
+
 		$$ = make_tree_node("CompSt", $1->line_no, 0);
 		add_child($$, $4);
 		add_child($$, $3);
@@ -454,6 +483,13 @@ Stmt:
 	| CompSt {
 		$$ = make_tree_node("Stmt", $1->line_no, 0);
 		add_child($$, $1);
+		for (auto it = var_table.begin(); it != var_table.end(); ) {
+			auto const& [var_name, var_scope] = (*it).first;
+			if (scope == var_scope) it = var_table.erase(it);
+			else ++it;
+		}
+		scope_flag = false;
+		scope--;
 	}
 	| RETURN Exp SEMI {
 		$$ = make_tree_node("Stmt", $1->line_no, 0);
@@ -505,6 +541,8 @@ Stmt:
 
 DefList: {
 		$$ = NULL; 
+		if (!scope_flag) ++scope;
+		scope_flag = false;
 	}
 	| Def DefList {
 		$$ = make_tree_node("DefList", $1->line_no, 0);
@@ -514,6 +552,8 @@ DefList: {
 	;
 Def:
 	Specifier DecList SEMI {
+		if (!scope_flag) ++scope;
+		scope_flag = true;
 		$$ = make_tree_node("Def", $1->line_no, 0);
 		add_child($$, $3);
 		add_child($$, $2);
@@ -523,6 +563,7 @@ Def:
 		// check type
 		string type_name = parse_Specifier($1);
 		if (!type_table.count(type_name)) {
+			printf("Error type 16 at Line %d: type \"%s\" is not defined.\n", $1->line_no, type_name.c_str());
 			is_valid = 0;
 		}
 		// check names
@@ -533,20 +574,20 @@ Def:
 			bool is_array = std::get<1>(entry);
 			int length = std::get<2>(entry);
 			tree_node *exp_node = std::get<3>(entry);
-			if (var_table.count(var_name)) {
+			if (var_table.count({var_name, scope})) {
 				printf("Error type 3 at Line %d: variable \"%s\" is redefined.\n", $1->line_no, var_name.c_str());
 			} else if (is_valid) {
 				if (is_array) {
 					if (length < 0) {
 						printf("Error type 21 at Line %d: the length of array is less than 0\n", $1->line_no);
 					} else {
-						var_table.insert({var_name, insert_array_type(type_name.c_str(), length)});
+						var_table.insert({{var_name, scope}, insert_array_type(type_name.c_str(), length)});
 					}
 				} else {
-					if (exp_node != nullptr && find_type_in_value_node(find_first_right_value_node(exp_node)) != type) {
+					if (exp_node != nullptr && !type_is_equal(find_type_in_value_node(find_first_right_value_node(exp_node)), type)) {
 						printf("Error type 5 at Line %d: unmatching types appear at both sides of the assignment operator\n", $2->line_no);
 					}
-					var_table.insert({var_name, type_name});
+					var_table.insert({{var_name, scope}, type_name});
 				}
 			}
 		});
@@ -595,7 +636,9 @@ Exp:
 	Exp ASSIGN Exp {
 
 		// single varible on the left
-		if (find_all_left_value_node($1).size() == 1) {
+		int left_value_cnt = find_all_left_value_node($1).size();
+		int right_value_cnt = find_all_right_value_node($1).size();
+		if (left_value_cnt == 1 && right_value_cnt == 1) {
 			type_t *var_type = find_type_in_value_node(find_first_left_value_node($1));
 			tree_node *leaf = find_first_right_value_node($3);
 			type_t *leaf_type = find_type_in_value_node(leaf);
@@ -603,7 +646,7 @@ Exp:
 #ifdef DEBUG
 			printf("Detect ASSIGN, left[%s], right[%s]\n", var_type->name, leaf_type->name);
 #endif
-			if (var_type != leaf_type) {
+			if (!type_is_equal(var_type, leaf_type)) {
 				printf("Error type 5 at Line %d: unmatching types appear at both sides of the assignment operator\n", $2->line_no);
 				$$ = make_tree_node("Exp", $1->line_no, 0);
 			} else {
@@ -808,7 +851,7 @@ Exp:
 	| ID LP Args RP {
 		
 		if (!func_table.count($1->name+4)) {
-			if (type_table.count($1->name+4) || var_table.count($1->name+4)) {
+			if (type_table.count($1->name+4) || find_var_in_table($1->name+4) != var_table.end()) {
 				printf("Error type 11 at Line %d: applying function invocation operator on non-function variables\n", $1->line_no);
 			} else {
 				printf("Error type 2 at Line %d: function \"%s\" is not defined.\n", $1->line_no, $1->name+4);
@@ -848,7 +891,7 @@ Exp:
 
 		const char *func_name = $1->name+4;
 		if (!func_table.count($1->name+4)) {
-			if (type_table.count($1->name+4) || var_table.count($1->name+4)) {
+			if (type_table.count($1->name+4) || find_var_in_table($1->name+4) != var_table.end()) {
 				printf("Error type 11 at Line %d: applying function invocation operator on non-function variables\n", $1->line_no);
 			} else {
 				printf("Error type 2 at Line %d: function \"%s\" is not defined.\n", $1->line_no, func_name);
@@ -871,7 +914,7 @@ Exp:
 #ifdef DEBUG
 		printf("Reduce []\n");
 #endif
-		if (find_all_left_value_node($1).size() != 1) {
+		if (find_all_left_value_node($1).size() != 1 || find_all_right_value_node($1).size() != 1) {
 			printf("Error type 10 at Line %d: apply index operator on non-array type\n", $1->line_no);
 		} else {
 			type_t *type = find_type_in_value_node(find_first_left_value_node($1));
@@ -894,7 +937,7 @@ Exp:
 		add_child($$, $1);
 
 		const char *var_name = $1->name+4;
-		if (!var_table.count(var_name)) {
+		if (find_var_in_table(var_name) == var_table.end()) {
 			printf("Error type 1 at Line %d: variable \"%s\" is used without definition.\n", $1->line_no, var_name);
 		}
 	}
@@ -984,9 +1027,9 @@ void init() {
 
 type_t* parse_instance_type_in_struct(struct_var_list list, int line_no) {
 	if (list.size() == 1) {
-		return type_table[var_table[*(list.begin())]];
+		return type_table[(*find_var_in_table(*(list.begin()))).second];
 	}
-	type_t *cur_type = type_table[var_table[*(list.begin())]];
+	type_t *cur_type = type_table[(*find_var_in_table(*(list.begin()))).second];
 	list.pop_front();
 	bool has_error = false;
 	std::for_each(list.begin(), list.end(), [&](const string var_name) {
@@ -1004,7 +1047,7 @@ type_t* parse_instance_type_in_struct(struct_var_list list, int line_no) {
 			}
 			cur_type = find_instance_type_in_struct(cur_type, var_name);
 			if (cur_type == 0) {
-				printf("Error type 14 at Line %d: accessing an undefined structure member \"%s\"\n.", line_no, var_name.c_str());
+				printf("Error type 14 at Line %d: accessing an undefined structure member \"%s\".\n", line_no, var_name.c_str());
 				has_error = true;
 			}
 		}
@@ -1039,7 +1082,7 @@ type_t *find_type_in_value_node(tree_node *leaf, bool &is_left) {
 		}
 		is_left = true;
 	} else {
-		leaf_type = type_table[var_table[leaf->name+4]];
+		leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
 		is_left = true;
 	}
 	return leaf_type;
@@ -1068,7 +1111,7 @@ type_t *find_type_in_value_node(tree_node *leaf) {
 			leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
 		}
 	} else {
-		leaf_type = type_table[var_table[leaf->name+4]];
+		leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
 	}
 	return leaf_type;
 }
@@ -1085,6 +1128,20 @@ string insert_array_type(const char *type_name, int length) {
 	ptr->data.array->size = length;
 	type_table.insert({type_name_array, ptr});
 	return string(type_name_array);
+}
+
+map<pair<string, int>, string>::iterator find_var_in_table(string var_name) {
+	map<pair<string, int>, string>::iterator ret;
+	int max_scope = -1;
+	for (map<pair<string, int>, string>::iterator it = var_table.begin(); it != var_table.end(); ++it) {
+		auto entry = *it;
+		if (entry.first.first == var_name && entry.first.second > max_scope) {
+			ret = it;
+			max_scope = entry.first.second;
+		}
+	}
+	if (max_scope == -1) return var_table.end();
+	return ret;
 }
 
 int main(int argc, char **argv) {

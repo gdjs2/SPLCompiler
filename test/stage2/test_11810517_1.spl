@@ -1,0 +1,8 @@
+int x;
+
+int f(int a, int b) {
+	int y;
+	a = 10;
+	b = a;
+	z = 10;
+}

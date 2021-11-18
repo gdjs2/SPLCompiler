@@ -1,7 +1,7 @@
 CC=g++
 FLEX=flex
 BISON=bison
-FLAGS=-lfl -ly -std=c++11 -Iinc $(CFLAG)
+FLAGS=-lfl -ly -std=c++17 -Iinc $(CFLAG)
 
 SRC_DIR=./src
 INC_DIR=./inc

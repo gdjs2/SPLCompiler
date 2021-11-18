@@ -1,0 +1,40 @@
+// This test is used to test complex conpensation struct
+
+// st1 and st2 are the same;
+struct st1 {
+	int a;
+	char c;
+	float b1, b2;
+};
+
+struct st2 {
+	int aa;
+	char cc;
+	float bb1, bb2;
+};
+
+// s3 and s4 are the same;
+struct st3 {
+	struct st1 s[20];
+	int x[20];
+};
+
+struct st4 {
+	int x[20];
+	struct st2 s[20];
+};
+
+int main() {
+	struct st3 s1;
+	struct st4 s2;
+	// check the same type, pass
+	s1 = s2;
+
+	// check the same type of the instance variable, pass
+	s1.s = s2.s;
+
+	// error here, accessing non-member of a struct
+	s1.s[10].z = 20;
+
+	return 1;
+}

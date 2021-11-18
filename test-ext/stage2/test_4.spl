@@ -1,0 +1,18 @@
+// this test is used to test the global variable declaration and initialization
+// It is worth to be aware of that, in the original reduction rules, the global variables cannot be initilized.
+// e.g., 
+// int a; // ok
+// int a = 10; // not ok in the global variables declaration
+// However, we make all these possible.
+
+int a;
+int b = 20;
+char c = 'C';
+float x = -1.2345;
+
+// type check fails here
+int z = 1.234;
+
+int main() {
+	return 1;
+}

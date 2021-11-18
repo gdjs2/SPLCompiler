@@ -187,7 +187,7 @@ static inline bool field_is_equal(const field_list_t *lhs, const field_list_t *r
 			return false;
 		}
 		auto it = std::find_if(type_list.begin(), type_list.end(), 
-			[&rhs](type_t *t) { return t == rhs->type; });
+			[&rhs](type_t *t) { return type_is_equal(t, rhs->type); });
 		if (it == type_list.end()) {
 			return false;
 		}
@@ -198,6 +198,8 @@ static inline bool field_is_equal(const field_list_t *lhs, const field_list_t *r
 }
 
 bool type_is_equal(const type_t *lhs, const type_t *rhs) {
+	if (lhs == nullptr && rhs == nullptr) return true;
+	if (lhs == nullptr || rhs == nullptr) return false;
 	if (lhs->category != rhs->category) {
 		return false;
 	}

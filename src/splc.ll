@@ -1,4 +1,5 @@
 %{
+	extern "C" int yylex();
 	#include "splc.tab.hh"
 	#include "tree_node.h"
 	#include <cstdlib>

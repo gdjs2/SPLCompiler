@@ -17,7 +17,7 @@ texical.o: .lex .syntax .bin
 .lex: $(SRC_DIR)/$(LEX_SRC)
 	$(FLEX) -o $(SRC_DIR)/lex.yy.cc --header-file=$(INC_DIR)/lex.yy.hh $<
 .syntax: $(SRC_DIR)/$(YACC_SRC)
-	$(BISON) -o $(SRC_DIR)/splc.tab.cc --header=$(INC_DIR)/splc.tab.hh $<
+	$(BISON) -o $(SRC_DIR)/splc.tab.cc --defines=$(INC_DIR)/splc.tab.hh $<
 .bin:
 	@mkdir -p bin
 .PHONY: clean

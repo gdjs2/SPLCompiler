@@ -19,8 +19,6 @@
 	type_t *find_type_in_value_node(tree_node *leaf);
 	type_t *find_type_in_value_node(tree_node *leaf, bool &is_left);
 	map<pair<string, int>, string>::iterator find_var_in_table(string var_name);
-
-
 	int has_error = 0;
 	int scope = 0;
 	bool scope_flag = false;

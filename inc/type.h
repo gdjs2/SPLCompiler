@@ -49,7 +49,6 @@ var_info_list parse_ExtDecList(tree_node *ext_dec_list_node);
 var_info_list parse_DecList(tree_node *dec_list_node);
 dec_list parse_DefList(tree_node *def_list_node);
 std::list<std::pair<std::string, std::string>> parse_VarList(tree_node*);
-
 bool type_is_equal(const type_t*, const type_t*);
 struct_var_list parse_Struct_Exp(tree_node*);
 type_t* find_instance_type_in_struct(type_t *struct_type, std::string instance_name);

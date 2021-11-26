@@ -22,6 +22,7 @@
 	int has_error = 0;
 	int scope = 0;
 	bool scope_flag = false;
+	// pair<string, int>, string string:type
 	map<pair<string, int>, string> var_table;
 	map<string, func_t*> func_table;
 	map<string, type_t*> type_table;
@@ -1080,8 +1081,11 @@ type_t *find_type_in_value_node(tree_node *leaf, bool &is_left) {
 		}
 		is_left = true;
 	} else {
-		leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
-		is_left = true;
+		auto it = find_var_in_table(leaf->name+4);
+		if (it != var_table.end()) {
+			leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
+			is_left = true;
+		}
 	}
 	return leaf_type;
 }
@@ -1109,7 +1113,10 @@ type_t *find_type_in_value_node(tree_node *leaf) {
 			leaf_type = parse_instance_type_in_struct(list, leaf->line_no)->data.array->base;
 		}
 	} else {
-		leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
+		auto it = find_var_in_table(leaf->name+4);
+		if (it != var_table.end()) {
+			leaf_type = type_table[(*find_var_in_table(leaf->name+4)).second];
+		}
 	}
 	return leaf_type;
 }

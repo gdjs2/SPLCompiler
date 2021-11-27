@@ -25,7 +25,9 @@ struct tree_node {
 	int is_terminate;
 	int children_number;
 	child_list_node *child_first_ptr;
+	tree_node* parent;
 	vector<string> ir;
+	string place;
 	// value_node *value;
 };
 

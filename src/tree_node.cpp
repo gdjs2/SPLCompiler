@@ -67,6 +67,7 @@ void add_child(tree_node *father, tree_node *child) {
 	new_child->next_child = father->child_first_ptr;
 	father->child_first_ptr = new_child;
 	father->children_number++;
+	child->parent=father;
 }
 
 tree_node* find_first_leaf_node(tree_node *root) {

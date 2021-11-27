@@ -9,9 +9,10 @@ LEX_SRC=splc.ll
 YACC_SRC=splc.yy
 TREE_NODE_SRC=tree_node.cpp
 TYPE_SRC=type.cpp
+INTER_CODE_SRC=inter_code.cpp
 
-splc: .lex .syntax .bin $(SRC_DIR)/$(TREE_NODE_SRC) $(SRC_DIR)/$(TYPE_SRC)
-	$(CC) -o ./bin/$@ $(FLAGS) $(LDFLAGS) $(CPPFLAGS) $(SRC_DIR)/splc.tab.cc $(SRC_DIR)/$(TREE_NODE_SRC) $(SRC_DIR)/$(TYPE_SRC)
+splc: .lex .syntax .bin $(SRC_DIR)/$(TREE_NODE_SRC) $(SRC_DIR)/$(TYPE_SRC) $(SRC_DIR)/$(INTER_CODE_SRC)
+	$(CC) -o ./bin/$@ $(FLAGS) $(LDFLAGS) $(CPPFLAGS) $(SRC_DIR)/splc.tab.cc $(SRC_DIR)/$(TREE_NODE_SRC) $(SRC_DIR)/$(TYPE_SRC) $(SRC_DIR)/$(INTER_CODE_SRC)
 texical.o: .lex .syntax .bin
 	$(CC) -o ./bin/$@ -lfl $(LDFLAGS) $(CPPFLAGS) $(SRC_DIR)/lex.yy.cc
 .lex: $(SRC_DIR)/$(LEX_SRC)

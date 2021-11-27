@@ -1,6 +1,10 @@
 #ifndef __TREE_NODE_H
 #define __TREE_NODE_H
 
+#include <string>
+#include <vector> 
+using namespace std;
+
 typedef struct tree_node tree_node;
 typedef struct child_list_node child_list_node;
 
@@ -21,6 +25,7 @@ struct tree_node {
 	int is_terminate;
 	int children_number;
 	child_list_node *child_first_ptr;
+	vector<string> ir;
 	// value_node *value;
 };
 

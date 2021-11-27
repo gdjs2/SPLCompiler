@@ -1,6 +1,7 @@
 %{
 	#include "lex.yy.cc"
 	#include "type.h"
+	#include "inter_code.h"
 	#include <map>
 	#include <string>
 	#include <list>
@@ -22,6 +23,7 @@
 	int has_error = 0;
 	int scope = 0;
 	bool scope_flag = false;
+	tree_node* root;
 	// pair<string, int>, string string:type
 	map<pair<string, int>, string> var_table;
 	map<string, func_t*> func_table;
@@ -55,10 +57,7 @@ Program:
 	ExtDefList {
 		$$ = make_tree_node("Program", $1->line_no, 0);
 		add_child($$, $1);
-#ifdef DEBUG
-		if (!has_error)
-			show_tree($$, 0);
-#endif
+		root = $$;
 	}
 	;
 ExtDefList: {
@@ -1160,6 +1159,15 @@ int main(int argc, char **argv) {
 		}
 		init();
 		yyparse();
+
+		if (!has_error){
+#ifdef DEBUG
+			show_tree(root, 0);
+#endif
+			show_tree(root, 0);
+			generate_ir(root);
+		}
+		
 		return 0;
 	} else {
 		fputs("Too many arguments! Expected: 2\n", stderr);

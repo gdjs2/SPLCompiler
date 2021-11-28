@@ -57,6 +57,10 @@ bin/
 src/lex.yy.c
 src/splc.tab.c
 src/splc.tab.h
+src/lex.yy.cc 
+src/splc.tab.cc
+inc/lex.yy.hh
+inc/splc.tab.hh
 
 # Upload tests
 !tests/stage1/*

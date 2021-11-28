@@ -2,7 +2,7 @@
 #define __TREE_NODE_H
 
 #include <string>
-#include <vector> 
+#include <vector>
 using namespace std;
 
 typedef struct tree_node tree_node;
@@ -10,7 +10,7 @@ typedef struct child_list_node child_list_node;
 
 // struct value_node {
 // 	enum { INT_VALUE, FLOAT_VALUE, CHAR_VALUE, BOOL_VALUE} value_type;
-	
+
 // 	union {
 // 		int int_value;
 // 		float float_value;
@@ -20,20 +20,21 @@ typedef struct child_list_node child_list_node;
 // };
 
 struct tree_node {
-	const char *name;
-	int line_no;
-	int is_terminate;
-	int children_number;
-	child_list_node *child_first_ptr;
-	tree_node* parent;
-	vector<string> ir;
-	string place;
-	// value_node *value;
+    const char* name;
+    int line_no;
+    int is_terminate;
+    int children_number;
+    child_list_node* child_first_ptr;
+    tree_node* parent;
+    vector<string> ir;
+    string* ir_place;
+    string* ir_name;
+    // value_node *value;
 };
 
 struct child_list_node {
-	tree_node *node;
-	child_list_node *next_child;
+    tree_node* node;
+    child_list_node* next_child;
 };
 
 tree_node* make_tree_node(const char*, int, int);

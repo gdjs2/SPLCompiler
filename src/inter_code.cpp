@@ -59,7 +59,6 @@ void traverse_FunDec(tree_node* node) {
         string ir = "FUNCTION " +
                     string(node->child_first_ptr->node->name).substr(4) + " :";
         node->ir.push_back(ir);
-        cout << ir << endl;
     } else if (node->children_number == 4) {
         printf("Not implement");
     } else {
@@ -128,9 +127,9 @@ void traverse_Dec(tree_node* node) {
         tree_node* VarDec = node->child_first_ptr->node;
         tree_node* Exp = node->child_first_ptr->next_child->next_child->node;
         traverse_VarDec(VarDec);
+        node->ir_place = VarDec->ir_name;
         traverse_Exp(Exp);
 
-        node->ir_place = VarDec->ir_name;
         concatenate_ir(node, VarDec, Exp);
 
     } else {
@@ -142,9 +141,7 @@ void traverse_Dec(tree_node* node) {
 void traverse_VarDec(tree_node* node) {
     if (node->children_number == 1) {
         string id = string(node->child_first_ptr->node->name).substr(4);
-        node->ir_name = &id;
-        cout << "---" << endl;
-        cout << *(node->ir_name);
+        node->ir_name = id;
 
     } else if (node->children_number == 4) {
         printf("Not implemented");
@@ -182,7 +179,7 @@ void traverse_Stmt(tree_node* node) {
         // Stmt -> RETURN Exp SEMI
         tree_node* Exp = node->child_first_ptr->next_child->node;
         string place = "t" + to_string(cnt);
-        node->ir_place = &place;
+        node->ir_place = place;
         traverse_Exp(Exp);
         node->ir = Exp->ir;
         node->ir.push_back("RETURN " + place);
@@ -190,24 +187,20 @@ void traverse_Stmt(tree_node* node) {
 }
 
 void traverse_Exp(tree_node* node) {
-    string place = *(node->parent->ir_place);
-    // !memcmp(leaf->name, "INT", 3)
+    string place = node->parent->ir_place;
     if (node->children_number == 1 &&
         !memcmp(node->child_first_ptr->node->name, "INT", 3)) {
         // Exp -> INT
-        cout << "INT" << endl;
         string ir = place + " := #" +
                     string(node->child_first_ptr->node->name).substr(5);
-        cout << ir << endl;
         node->ir.push_back(ir);
 
     } else if (node->children_number == 1 &&
                !memcmp(node->child_first_ptr->node->name, "ID", 2)) {
         // Exp -> ID
         string ir = place + " := " +
-                    string(node->child_first_ptr->node->name).substr(5);
+                    string(node->child_first_ptr->node->name).substr(4);
         node->ir.push_back(ir);
-        cout << ir << endl;
     } else {
         printf("Not implemented");
     }

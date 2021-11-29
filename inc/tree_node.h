@@ -27,8 +27,8 @@ struct tree_node {
     child_list_node* child_first_ptr;
     tree_node* parent;
     vector<string> ir;
-    string* ir_place;
-    string* ir_name;
+    string ir_place;
+    string ir_name;
     // value_node *value;
 };
 

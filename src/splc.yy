@@ -1164,7 +1164,8 @@ int main(int argc, char **argv) {
 #ifdef DEBUG
 			show_tree(root, 0);
 #endif
-			generate_ir(root);
+		show_tree(root, 0);
+			//generate_ir(root);
 		}
 		return 0;
 	} else {

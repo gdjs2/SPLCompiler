@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+using std::string;
+using std::vector;
 
 typedef struct tree_node tree_node;
 typedef struct child_list_node child_list_node;

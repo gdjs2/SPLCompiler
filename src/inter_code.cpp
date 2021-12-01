@@ -1,10 +1,20 @@
 #include "inter_code.h"
+
+#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
+
 int cnt = 0;
-// traverse the tree in post-order
+// translate the tree in post-order
 void generate_ir(tree_node* root) {
     tree_node* ExtDefList = root->child_first_ptr->node;
     // Program -> ExtDefList
-    traverse_ExtDefList(ExtDefList);
+    translate_ExtDefList(ExtDefList);
     root->ir = ExtDefList->ir;
     for (auto i : root->ir) {
         cout << i << endl;
@@ -21,40 +31,40 @@ void concatenate_ir(tree_node* target, tree_node* s1, tree_node* s2) {
 };
 
 // ExtDefList -> ExtDef ExtDefList | $
-void traverse_ExtDefList(tree_node* node) {
+void translate_ExtDefList(tree_node* node) {
     if (!node || node->children_number == 0) {
         return;
     } else if (node->children_number == 2) {
         tree_node* ExtDef = node->child_first_ptr->node;
         tree_node* ExtDefList = node->child_first_ptr->next_child->node;
 
-        traverse_ExtDef(ExtDef);
-        traverse_ExtDefList(ExtDefList);
+        translate_ExtDef(ExtDef);
+        translate_ExtDefList(ExtDefList);
 
         concatenate_ir(node, ExtDef, ExtDefList);
     } else {
-        printf("Error in traverse_ExtDefList!");
+        printf("Error in translate_ExtDefList!");
     }
 }
 
 // ExtDefList -> Specifier ExtDecList SEMI +| Specifier SEMI +|Specifier FunDec
 // CompSt
-void traverse_ExtDef(tree_node* node) {
+void translate_ExtDef(tree_node* node) {
     if (node->children_number == 3 &&
         !strcmp(node->child_first_ptr->next_child->node->name, "FunDec")) {
         tree_node* Specifier = node->child_first_ptr->node;
         tree_node* FunDec = node->child_first_ptr->next_child->node;
         tree_node* CompSt = node->child_first_ptr->next_child->next_child->node;
-        traverse_FunDec(FunDec);
-        traverse_CompSt(CompSt);
+        translate_FunDec(FunDec);
+        translate_CompSt(CompSt);
         concatenate_ir(node, FunDec, CompSt);
     } else {
-        printf("Error in traverse_ExtDef!");
+        printf("Error in translate_ExtDef!");
     }
 }
 
 // FunDec -> ID LP RP | ID LP VarList RP +
-void traverse_FunDec(tree_node* node) {
+void translate_FunDec(tree_node* node) {
     if (node->children_number == 3) {
         string ir = "FUNCTION " +
                     string(node->child_first_ptr->node->name).substr(4) + " :";
@@ -62,83 +72,83 @@ void traverse_FunDec(tree_node* node) {
     } else if (node->children_number == 4) {
         printf("Not implement");
     } else {
-        printf("Error in traverse_ExtDef!");
+        printf("Error in translate_ExtDef!");
     }
 }
 
 // CompSt -> LC DefList StmtList RC
-void traverse_CompSt(tree_node* node) {
+void translate_CompSt(tree_node* node) {
     tree_node* DefList = node->child_first_ptr->next_child->node;
     tree_node* StmtList = node->child_first_ptr->next_child->next_child->node;
-    traverse_DefList(DefList);
-    traverse_StmtList(StmtList);
+    translate_DefList(DefList);
+    translate_StmtList(StmtList);
     concatenate_ir(node, DefList, StmtList);
 }
 
 // DefList -> Def DefList | $
-void traverse_DefList(tree_node* node) {
+void translate_DefList(tree_node* node) {
     if (!node || node->children_number == 0) {
         return;
     } else if (node->children_number == 2) {
         tree_node* Def = node->child_first_ptr->node;
         tree_node* DefList = node->child_first_ptr->next_child->node;
-        traverse_Def(Def);
-        traverse_DefList(DefList);
+        translate_Def(Def);
+        translate_DefList(DefList);
         concatenate_ir(node, Def, DefList);
     } else {
-        printf("Error in traverse_DefList");
+        printf("Error in translate_DefList");
     }
 }
 
 // Def -> Specifier DecList SEMI
-void traverse_Def(tree_node* node) {
+void translate_Def(tree_node* node) {
     tree_node* Specifier = node->child_first_ptr->node;
     tree_node* DecList = node->child_first_ptr->next_child->node;
 
-    traverse_DecList(DecList);
+    translate_DecList(DecList);
     node->ir = DecList->ir;
 }
 
 // DecList -> Dec | Dec COMMA DecList
-void traverse_DecList(tree_node* node) {
+void translate_DecList(tree_node* node) {
     if (node->children_number == 1) {
         tree_node* Dec = node->child_first_ptr->node;
-        traverse_Dec(Dec);
+        translate_Dec(Dec);
         node->ir = Dec->ir;
     } else if (node->children_number == 3) {
         tree_node* Dec = node->child_first_ptr->node;
         tree_node* DecList =
             node->child_first_ptr->next_child->next_child->node;
-        traverse_Dec(Dec);
-        traverse_DecList(DecList);
+        translate_Dec(Dec);
+        translate_DecList(DecList);
         concatenate_ir(node, Dec, DecList);
     } else {
-        printf("Error in traverse_DecList");
+        printf("Error in translate_DecList");
     }
 }
 
 // Dec -> VarDec | VarDec ASSIGN Exp
-void traverse_Dec(tree_node* node) {
+void translate_Dec(tree_node* node) {
     if (node->children_number == 1) {
         tree_node* VarDec = node->child_first_ptr->node;
-        traverse_VarDec(VarDec);
+        translate_VarDec(VarDec);
         node->ir = VarDec->ir;
     } else if (node->children_number == 3) {
         tree_node* VarDec = node->child_first_ptr->node;
         tree_node* Exp = node->child_first_ptr->next_child->next_child->node;
-        traverse_VarDec(VarDec);
+        translate_VarDec(VarDec);
         node->ir_place = VarDec->ir_name;
-        traverse_Exp(Exp);
+        translate_Exp(Exp);
 
         concatenate_ir(node, VarDec, Exp);
 
     } else {
-        printf("Error in traverse_Dec");
+        printf("Error in translate_Dec");
     }
 }
 
 // VarDec -> ID | VarDec LB INT RB
-void traverse_VarDec(tree_node* node) {
+void translate_VarDec(tree_node* node) {
     if (node->children_number == 1) {
         string id = string(node->child_first_ptr->node->name).substr(4);
         node->ir_name = id;
@@ -146,22 +156,22 @@ void traverse_VarDec(tree_node* node) {
     } else if (node->children_number == 4) {
         printf("Not implemented");
     } else {
-        printf("Error in traverse_VarDec");
+        printf("Error in translate_VarDec");
     }
 }
 
 // StmtList -> Stmt StmtList | $
-void traverse_StmtList(tree_node* node) {
+void translate_StmtList(tree_node* node) {
     if (!node || node->children_number == 0) {
         return;
     } else if (node->children_number == 2) {
         tree_node* Stmt = node->child_first_ptr->node;
         tree_node* StmtList = node->child_first_ptr->next_child->node;
-        traverse_Stmt(Stmt);
-        traverse_StmtList(StmtList);
+        translate_Stmt(Stmt);
+        translate_StmtList(StmtList);
         concatenate_ir(node, Stmt, StmtList);
     } else {
-        printf("Error in traverse_StmtList");
+        printf("Error in translate_StmtList");
     }
 }
 
@@ -173,20 +183,20 @@ void traverse_StmtList(tree_node* node) {
  * | IF LP Exp RP Stmt ELSE Stmt
  * | WHILE LP Exp RP Stmt
  */
-void traverse_Stmt(tree_node* node) {
+void translate_Stmt(tree_node* node) {
     if (node->children_number == 3 &&
         !strcmp(node->child_first_ptr->node->name, "RETURN")) {
         // Stmt -> RETURN Exp SEMI
         tree_node* Exp = node->child_first_ptr->next_child->node;
-        string place = "t" + to_string(cnt);
+        string place = "t" + std::to_string(cnt);
         node->ir_place = place;
-        traverse_Exp(Exp);
+        translate_Exp(Exp);
         node->ir = Exp->ir;
         node->ir.push_back("RETURN " + place);
     }
 }
 
-void traverse_Exp(tree_node* node) {
+void translate_Exp(tree_node* node) {
     string place = node->parent->ir_place;
     if (node->children_number == 1 &&
         !memcmp(node->child_first_ptr->node->name, "INT", 3)) {

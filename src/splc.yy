@@ -1021,6 +1021,21 @@ void init() {
 	ptr->category = type_t::PRIMITIVE;
 	ptr->data.primitive = type_t::data_t::ENUM_CHAR;
 	type_table.insert({string("char"), ptr});
+
+	func_t *func_ptr = new func_t();
+	func_ptr->ret_type = nullptr;
+	func_ptr->args_num = 1;
+	func_ptr->args_list = new field_list_t();
+	memset(func_ptr->args_list->name, 0, 32);
+	func_ptr->args_list->type = type_table["int"];
+	func_ptr->args_list->next = nullptr;
+	func_table.insert({string("write"), func_ptr});
+
+	func_ptr = new func_t();
+	func_ptr->ret_type = type_table["int"];
+	func_ptr->args_num = 0;
+	func_ptr->args_list = nullptr;
+	func_table.insert({string("read"), func_ptr});
 }
 
 type_t* parse_instance_type_in_struct(struct_var_list list, int line_no) {

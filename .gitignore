@@ -64,3 +64,5 @@ inc/splc.tab.hh
 
 # Upload tests
 !tests/stage1/*
+
+submit_project_2

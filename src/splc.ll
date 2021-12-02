@@ -165,7 +165,7 @@ WHITE		{white}
 #ifdef DEBUG
 	printf("<LE, %s>\n", yytext);
 #endif
-	yylval.tree_node = make_tree_node("LT", 0, 1);
+	yylval.tree_node = make_tree_node("LE", 0, 1);
 	return LE;
 }
 ">" {

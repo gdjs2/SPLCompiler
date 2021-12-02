@@ -13,3 +13,7 @@
 - [ ] Struct definition members name check (corresponding to scope)
 - [ ] Function void return type
 - [ ] Add all function parameters 
+
+## Project 3
+Passed test
+1 2 3 10

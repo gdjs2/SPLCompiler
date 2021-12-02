@@ -7,49 +7,64 @@ Program (1)
         ID: main
         LP
         RP
-      CompSt (2)
+      CompSt (1)
         LC
-        DefList (3)
-          Def (3)
-            Specifier (3)
+        DefList (2)
+          Def (2)
+            Specifier (2)
               TYPE: int
-            DecList (3)
-              Dec (3)
-                VarDec (3)
-                  ID: a
-              COMMA
+            DecList (2)
+              Dec (2)
+                VarDec (2)
+                  ID: N
+                ASSIGN
+                Exp (2)
+                  INT: 30
+            SEMI
+          DefList (3)
+            Def (3)
+              Specifier (3)
+                TYPE: int
               DecList (3)
                 Dec (3)
                   VarDec (3)
-                    ID: b
-            SEMI
+                    ID: k
+                  ASSIGN
+                  Exp (3)
+                    INT: 0
+              SEMI
         StmtList (4)
           Stmt (4)
+            WHILE
+            LP
             Exp (4)
               Exp (4)
-                ID: a
-              ASSIGN
+                ID: k
+              LT
               Exp (4)
-                INT: 5
-            SEMI
-          StmtList (5)
-            Stmt (5)
-              Exp (5)
-                Exp (5)
-                  ID: b
-                ASSIGN
-                Exp (5)
-                  Exp (5)
-                    ID: a
-                  MUL
-                  Exp (5)
-                    LP
+                ID: N
+            RP
+            Stmt (4)
+              CompSt (4)
+                LC
+                StmtList (5)
+                  Stmt (5)
                     Exp (5)
                       Exp (5)
-                        ID: a
-                      PLUS
+                        ID: k
+                      ASSIGN
                       Exp (5)
-                        INT: 2
-                    RP
+                        Exp (5)
+                          ID: k
+                        PLUS
+                        Exp (5)
+                          INT: 1
+                    SEMI
+                RC
+          StmtList (7)
+            Stmt (7)
+              RETURN
+              Exp (7)
+                INT: 0
               SEMI
         RC

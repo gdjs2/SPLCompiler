@@ -75,8 +75,6 @@ child_list_node* make_child_list_node(tree_node* tree_node) {
 }
 
 void add_child(tree_node* father, tree_node* child) {
-    if (child)
-        child->parent = father;
     child_list_node* new_child = make_child_list_node(child);
     new_child->next_child = father->child_first_ptr;
     father->child_first_ptr = new_child;

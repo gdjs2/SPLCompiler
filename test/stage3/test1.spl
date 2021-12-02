@@ -1,6 +1,8 @@
-int main()
-{
-    int a, b;
-    a = 5;
-    b = a * (a + 2);
+int main(){
+    int N = 30;
+    int k = 0;
+    while(k <= N){
+        k = k +1;
+    }
+    return 0;
 }

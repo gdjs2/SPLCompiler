@@ -9,7 +9,12 @@ using std::endl;
 using std::string;
 using std::vector;
 
-int cnt = 0;
+int tmp_cnt = 0;
+int label_cnt = 0;
+string new_place() {
+    tmp_cnt++;
+    return "t" + std::to_string(tmp_cnt);
+}
 // translate the tree in post-order
 void generate_ir(tree_node* root) {
     tree_node* ExtDefList = root->child_first_ptr->node;
@@ -63,14 +68,18 @@ void translate_ExtDef(tree_node* node) {
     }
 }
 
-// FunDec -> ID LP RP | ID LP VarList RP +
+// FunDec -> ID LP RP | ID LP VarList RP
 void translate_FunDec(tree_node* node) {
     if (node->children_number == 3) {
-        string ir = "FUNCTION " +
-                    string(node->child_first_ptr->node->name).substr(4) + " :";
-        node->ir.push_back(ir);
+        node->ir.push_back("FUNCTION " +
+                           string(node->child_first_ptr->node->name).substr(4) +
+                           " :");
     } else if (node->children_number == 4) {
-        printf("Not implement");
+        node->ir.push_back("FUNCTION " +
+                           string(node->child_first_ptr->node->name).substr(4) +
+                           " :");
+        node->ir.push_back("PARAM: ");
+
     } else {
         printf("Error in translate_ExtDef!");
     }
@@ -137,7 +146,7 @@ void translate_Dec(tree_node* node) {
         tree_node* VarDec = node->child_first_ptr->node;
         tree_node* Exp = node->child_first_ptr->next_child->next_child->node;
         translate_VarDec(VarDec);
-        node->ir_place = VarDec->ir_name;
+        node->ir_place = VarDec->ir_place;
         translate_Exp(Exp);
 
         concatenate_ir(node, VarDec, Exp);
@@ -151,10 +160,10 @@ void translate_Dec(tree_node* node) {
 void translate_VarDec(tree_node* node) {
     if (node->children_number == 1) {
         string id = string(node->child_first_ptr->node->name).substr(4);
-        node->ir_name = id;
+        node->ir_place = id;
 
     } else if (node->children_number == 4) {
-        printf("Not implemented");
+        printf("Not implemented1");
     } else {
         printf("Error in translate_VarDec");
     }
@@ -188,11 +197,23 @@ void translate_Stmt(tree_node* node) {
         !strcmp(node->child_first_ptr->node->name, "RETURN")) {
         // Stmt -> RETURN Exp SEMI
         tree_node* Exp = node->child_first_ptr->next_child->node;
-        string place = "t" + std::to_string(cnt);
+        string place = new_place();
         node->ir_place = place;
         translate_Exp(Exp);
         node->ir = Exp->ir;
         node->ir.push_back("RETURN " + place);
+    } else if (node->children_number == 1 &&
+               !strcmp(node->child_first_ptr->node->name, "CompSt")) {
+        // Stmt -> CompSt
+        tree_node* CompSt = node->child_first_ptr->node;
+        translate_CompSt(CompSt);
+        node->ir = CompSt->ir;
+    } else if (node->children_number == 2 &&
+               !strcmp(node->child_first_ptr->node->name, "Exp")) {
+        // Stmt -> Exp SEMI
+        tree_node* Exp = node->child_first_ptr->node;
+        translate_Exp(Exp);
+        node->ir = Exp->ir;
     }
 }
 
@@ -211,7 +232,116 @@ void translate_Exp(tree_node* node) {
         string ir = place + " := " +
                     string(node->child_first_ptr->node->name).substr(4);
         node->ir.push_back(ir);
-    } else {
-        printf("Not implemented");
+
+    } else if (node->children_number == 3 &&
+               !strcmp(node->child_first_ptr->node->name, "Exp") &&
+               !strcmp(
+                   node->child_first_ptr->next_child->next_child->node->name,
+                   "Exp")) {
+        tree_node* Exp1 = node->child_first_ptr->node;
+        tree_node* Exp2 = node->child_first_ptr->next_child->next_child->node;
+
+        // Exp -> Exp ASSIGN Exp
+        if (!strcmp(node->child_first_ptr->next_child->node->name, "ASSIGN")) {
+            string variable =
+                string(node->child_first_ptr->node->child_first_ptr->node->name)
+                    .substr(4);
+            node->ir_place = variable;
+            translate_Exp(Exp2);
+            node->ir = Exp2->ir;
+            if (place != "")
+                node->ir.push_back(place + "!!! :=" + variable);
+
+        } else if (!strcmp(node->child_first_ptr->next_child->node->name,
+                           "PLUS")) {
+            string t1 = new_place();
+            string t2 = new_place();
+            node->ir_place = t1;
+            translate_Exp(Exp1);
+            node->ir_place = t2;
+            translate_Exp(Exp2);
+            concatenate_ir(node, Exp1, Exp2);
+            node->ir.push_back(place + " := " + t1 + " + " + t2);
+        } else if (!strcmp(node->child_first_ptr->next_child->node->name,
+                           "MINUS")) {
+            string t1 = new_place();
+            string t2 = new_place();
+            node->ir_place = t1;
+            translate_Exp(Exp1);
+            node->ir_place = t2;
+            translate_Exp(Exp2);
+            concatenate_ir(node, Exp1, Exp2);
+            node->ir.push_back(place + " := " + t1 + " - " + t2);
+        } else if (!strcmp(node->child_first_ptr->next_child->node->name,
+                           "MUL")) {
+            string t1 = new_place();
+            string t2 = new_place();
+            node->ir_place = t1;
+            translate_Exp(Exp1);
+            node->ir_place = t2;
+            translate_Exp(Exp2);
+            concatenate_ir(node, Exp1, Exp2);
+            node->ir.push_back(place + " := " + t1 + " * " + t2);
+
+        } else if (!strcmp(node->child_first_ptr->next_child->node->name,
+                           "DIV")) {
+            string t1 = new_place();
+            string t2 = new_place();
+            node->ir_place = t1;
+            translate_Exp(Exp1);
+            node->ir_place = t2;
+            translate_Exp(Exp2);
+            concatenate_ir(node, Exp1, Exp2);
+            node->ir.push_back(place + " := " + t1 + " / " + t2);
+        }
+    } else if (node->children_number == 2 &&
+               !strcmp(node->child_first_ptr->node->name, "MINUS")) {
+        string tp = new_place();
+        tree_node* Exp = node->child_first_ptr->next_child->node;
+        node->ir_place = tp;
+        translate_Exp(Exp);
+        node->ir = Exp->ir;
+        node->ir.push_back(place + ":=#0" + " - " + tp);
+
+    } else if (node->children_number == 3 &&
+               !strcmp(node->child_first_ptr->next_child->node->name, "LP") &&
+               !strcmp(
+                   node->child_first_ptr->next_child->next_child->node->name,
+                   "RP")) {
+        // Exp -> ID LP RP
+        string id = string(node->child_first_ptr->node->name).substr(4);
+        if (id == "read") {
+            node->ir.push_back("READ " + place);
+        } else {
+            node->ir.push_back(place + " := CALL" + id);
+        }
+    } else if (node->children_number == 4 &&
+               !strcmp(node->child_first_ptr->next_child->node->name, "LP") &&
+               (node->child_first_ptr->next_child->next_child->node->name,
+                "Args")) {
+        // Exp: ID LP Args RP
+        string id = string(node->child_first_ptr->node->name).substr(4);
+        tree_node* Args = node->child_first_ptr->next_child->next_child->node;
+        translate_Args(Args);
+        if (id == "write") {
+            tree_node* Exp = Args->child_first_ptr->node;
+            string tp = new_place();
+            Args->ir_place = tp;
+            translate_Exp(Exp);
+            node->ir = Exp->ir;
+            node->ir.push_back("WRITE " + tp);
+        }
+    } else if (node->children_number == 3 &&
+               !strcmp(node->child_first_ptr->node->name, "LP")) {
+        tree_node* Exp = node->child_first_ptr->next_child->node;
+        node->ir_place = place;
+        translate_Exp(Exp);
+        node->ir = Exp->ir;
+    }
+
+    else {
+        printf("Not implemented2");
     }
 }
+
+void translate_Args(tree_node* node) {}

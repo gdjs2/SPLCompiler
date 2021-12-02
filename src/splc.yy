@@ -1180,7 +1180,7 @@ int main(int argc, char **argv) {
 			show_tree(root, 0);
 #endif
 		show_tree(root, 0);
-			//generate_ir(root);
+		generate_ir(root);
 		}
 		return 0;
 	} else {

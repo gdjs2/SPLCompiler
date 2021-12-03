@@ -1,6 +1,6 @@
 # SPLCompiler
-
-## TODO
+## Project 2
+### TODO
 
 - [ ] Add other scope besides global
 - [x] Global variables type check
@@ -16,4 +16,7 @@
 
 ## Project 3
 Passed test
-1 2 3 10
+1 2 3 4 5 6 7 8 9 10
+### TODO
+- Support for array and struct
+- Optimize the generated IR

@@ -55,9 +55,14 @@
 /* high-level definition */
 Program: 
 	ExtDefList {
-		$$ = make_tree_node("Program", $1->line_no, 0);
-		add_child($$, $1);
-		root = $$;
+		if ($1) {
+			$$ = make_tree_node("Program", $1->line_no, 0);
+			add_child($$, $1);
+			root = $$;
+		} else {
+			root = $$ = nullptr;
+		}
+		
 	}
 	;
 ExtDefList: {
@@ -773,6 +778,10 @@ Exp:
 	| Exp PLUS Exp {
 		type_t *type1 = find_type_in_value_node(find_first_right_value_node($1));
 		type_t *type2 = find_type_in_value_node(find_first_right_value_node($3));
+#ifdef DEBUG
+		printf("Detected PLUS: \n");
+		printf("Left: [%s]\nRight: [%s]\n", type1->name, type2->name);
+#endif
 		if (type1 != type2) {
 			printf("Error type 7 at Line %d: unmatching operands\n", $2->line_no);
 		} else if (type1 != type_table["int"] && type1 != type_table["float"]) {

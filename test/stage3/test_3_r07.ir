@@ -1,0 +1,112 @@
+FUNCTION gcd1 :
+PARAM a
+PARAM b
+t2 := a
+t6 := a
+t7 := b
+t4 := t6 / t7
+t5 := b
+t3 := t4 * t5
+temp := t2 - t3
+t1 := temp
+LABEL label1 :
+t8 := temp
+t9 := #0
+IF t8 != t9 GOTO label2
+GOTO label3
+LABEL label2 :
+a := b
+t10 := a
+b := temp
+t11 := b
+t13 := a
+t17 := a
+t18 := b
+t15 := t17 / t18
+t16 := b
+t14 := t15 * t16
+temp := t13 - t14
+t12 := temp
+GOTO label1
+LABEL label3 :
+result := b
+t19 := result
+t20 := result
+RETURN t20
+FUNCTION gcd2 :
+PARAM x
+PARAM y
+remainder := #0
+t21 := x
+t22 := y
+IF t21 > t22 GOTO label4
+GOTO label5
+LABEL label4 :
+t24 := x
+t28 := x
+t29 := y
+t26 := t28 / t29
+t27 := y
+t25 := t26 * t27
+remainder := t24 - t25
+t23 := remainder
+t30 := remainder
+t31 := #0
+IF t30 == t31 GOTO label7
+GOTO label8
+LABEL label7 :
+t32 := y
+RETURN t32
+GOTO label9
+LABEL label8 :
+t34 := y
+t35 := remainder
+ARG t35
+ARG t34
+t33 := CALL gcd2
+RETURN t33
+LABEL label9 :
+GOTO label6
+LABEL label5 :
+t37 := y
+t41 := y
+t42 := x
+t39 := t41 / t42
+t40 := x
+t38 := t39 * t40
+remainder := t37 - t38
+t36 := remainder
+t43 := remainder
+t44 := #0
+IF t43 == t44 GOTO label10
+GOTO label11
+LABEL label10 :
+t45 := x
+RETURN t45
+GOTO label12
+LABEL label11 :
+t47 := x
+t48 := remainder
+ARG t48
+ARG t47
+t46 := CALL gcd2
+RETURN t46
+LABEL label12 :
+LABEL label6 :
+FUNCTION main :
+READ m
+READ n
+t51 := m
+t52 := n
+ARG t52
+ARG t51
+t50 := CALL gcd1
+WRITE t50
+t55 := m
+t56 := n
+ARG t56
+ARG t55
+t54 := CALL gcd2
+WRITE t54
+t57 := #0
+RETURN t57

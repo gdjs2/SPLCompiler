@@ -21,7 +21,7 @@ void translate_DefList(tree_node*);
 void translate_Def(tree_node*);
 void translate_DecList(tree_node*);
 void translate_Dec(tree_node*);
-void translate_Args(tree_node*, vector<string>);
+void translate_Args(tree_node*, vector<string>&);
 void translate_Exp(tree_node*, string);
 void translate_cond_Exp(tree_node*, string, string);
 

@@ -1,4 +1,5 @@
 #include "inter_code.h"
+#include "type.h"
 
 #include <string.h>
 #include <cstdio>
@@ -21,6 +22,10 @@ string new_label() {
 }
 // translate the tree in post-order
 void generate_ir(tree_node* root) {
+    if (root == nullptr) {
+        printf("Empty parse tree\n");
+        return;
+    }
     tree_node* ExtDefList = root->child_first_ptr->node;
     // Program -> ExtDefList
     translate_ExtDefList(ExtDefList);
@@ -88,8 +93,15 @@ void translate_FunDec(tree_node* node) {
         node->ir.push_back("FUNCTION " +
                            string(node->child_first_ptr->node->name).substr(4) +
                            " :");
-        node->ir.push_back("PARAM: ");
-
+        tree_node* VarList =
+            node->child_first_ptr->next_child->next_child->node;
+        args_list list = parse_Args_list(VarList);
+        for (auto i : list) {
+            node->ir.push_back("PARAM " +
+                               string(i->child_first_ptr->next_child->node
+                                          ->child_first_ptr->node->name)
+                                   .substr(4));
+        }
     } else {
         printf("Error in translate_ExtDef!");
     }
@@ -483,7 +495,7 @@ void translate_cond_Exp(tree_node* node, string lb_t, string lb_f) {
 }
 
 // Args -> Exp COMMA Args | Exp
-void translate_Args(tree_node* node, vector<string> arg_list) {
+void translate_Args(tree_node* node, vector<string>& arg_list) {
     if (node->children_number == 1) {
         string tp = new_place();
         tree_node* Exp = node->child_first_ptr->node;

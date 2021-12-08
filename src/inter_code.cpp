@@ -7,18 +7,20 @@
 #include <iostream>
 using std::cout;
 using std::endl;
+using std::stoi;
 using std::string;
+using std::to_string;
 using std::vector;
 
 int tmp_cnt = 0;
 int label_cnt = 0;
 string new_place() {
     tmp_cnt++;
-    return "t" + std::to_string(tmp_cnt);
+    return "t" + to_string(tmp_cnt);
 }
 string new_label() {
     label_cnt++;
-    return "label" + std::to_string(label_cnt);
+    return "label" + to_string(label_cnt);
 }
 // translate the tree in post-order
 void generate_ir(tree_node* root) {
@@ -72,16 +74,29 @@ void translate_ExtDefList(tree_node* node) {
 void translate_ExtDef(tree_node* node) {
     if (node->children_number == 3 &&
         !strcmp(node->child_first_ptr->next_child->node->name, "FunDec")) {
-        tree_node* Specifier = node->child_first_ptr->node;
         tree_node* FunDec = node->child_first_ptr->next_child->node;
         tree_node* CompSt = node->child_first_ptr->next_child->next_child->node;
         translate_FunDec(FunDec);
         translate_CompSt(CompSt);
         concatenate_ir(node, FunDec, CompSt);
+    } else if (node->children_number == 2) {
+        tree_node* Specifier = node->child_first_ptr->node;
+        translate_Specifier(Specifier);
     } else {
         printf("Error in translate_ExtDef!");
     }
 }
+
+void translate_Specifier(tree_node* node) {
+    if (!strcmp(node->child_first_ptr->node->name, "StructSpecifier")) {
+        tree_node* StructSpecifier = node->child_first_ptr->node;
+        translate_StructSpecifier(StructSpecifier);
+    } else {
+        printf("Error in translate_Specifier");
+    }
+}
+
+void translate_StructSpecifier(tree_node* node) {}
 
 // FunDec -> ID LP RP | ID LP VarList RP
 void translate_FunDec(tree_node* node) {
@@ -168,7 +183,9 @@ void translate_Dec(tree_node* node) {
         tree_node* VarDec = node->child_first_ptr->node;
         tree_node* Exp = node->child_first_ptr->next_child->next_child->node;
         translate_VarDec(VarDec);
-        string place = string(VarDec->child_first_ptr->node->name).substr(4);
+        string place;
+        if (VarDec->children_number == 1)
+            place = string(VarDec->child_first_ptr->node->name).substr(4);
         translate_Exp(Exp, place);
 
         concatenate_ir(node, VarDec, Exp);
@@ -181,7 +198,13 @@ void translate_Dec(tree_node* node) {
 // VarDec -> ID | VarDec LB INT RB
 void translate_VarDec(tree_node* node) {
     if (node->children_number == 4) {
-        printf("Error in translate_VarDec");
+        string id =
+            string(node->child_first_ptr->node->child_first_ptr->node->name)
+                .substr(4);
+        string size =
+            string(node->child_first_ptr->next_child->next_child->node->name)
+                .substr(5);
+        node->ir.push_back("DEC " + id + " " + to_string(stoi(size) * 4));
     }
 }
 
@@ -311,13 +334,34 @@ void translate_Exp(tree_node* node, string place) {
 
         // Exp -> Exp ASSIGN Exp
         if (!strcmp(node->child_first_ptr->next_child->node->name, "ASSIGN")) {
-            string variable =
-                string(node->child_first_ptr->node->child_first_ptr->node->name)
-                    .substr(4);
-            translate_Exp(Exp2, variable);
-            concatenate_ir(node, Exp2);
-            if (place != "")
-                node->ir.push_back(place + " := " + variable);
+            if (Exp1->children_number == 4) {
+                // left side is an array
+                string id = string(Exp1->child_first_ptr->node->child_first_ptr
+                                       ->node->name)
+                                .substr(4);
+                string offset_value =
+                    string(Exp1->child_first_ptr->next_child->next_child->node
+                               ->child_first_ptr->node->name)
+                        .substr(5);
+                string offset = new_place();
+                Exp1->ir.push_back(offset + " := #" + offset_value + " * #4");
+                string address = new_place();
+                Exp1->ir.push_back(address + " := " + id + " + " + offset);
+                string place = new_place();
+                translate_Exp(Exp2, place);
+                Exp2->ir.push_back("*" + address + " := " + place);
+
+            } else {
+                string variable = string(node->child_first_ptr->node
+                                             ->child_first_ptr->node->name)
+                                      .substr(4);
+                translate_Exp(Exp2, variable);
+
+                // if (place != "")
+                //     node->ir.push_back(place + " := " + variable);
+            }
+            node->ir.clear();
+            concatenate_ir(node, Exp1, Exp2);
 
         } else if (!strcmp(node->child_first_ptr->next_child->node->name,
                            "PLUS")) {
@@ -491,6 +535,11 @@ void translate_cond_Exp(tree_node* node, string lb_t, string lb_f) {
         concatenate_ir(node, Exp1, Exp2);
         node->ir.push_back("IF " + t1 + " < " + t2 + " GOTO " + lb_t);
         node->ir.push_back("GOTO " + lb_f);
+    } else if (node->children_number == 4 &&
+               !strcmp(node->child_first_ptr->next_child->node->name, "LB")) {
+        // TODO
+    } else if (node->children_number == 3 &&
+               !strcmp(node->child_first_ptr->next_child->node->name, "DOT")) {
     }
 }
 

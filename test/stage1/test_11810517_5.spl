@@ -1,7 +1,0 @@
-float b;
-float c
-
-int main(int a){
-    b=0;
-    main();
-}

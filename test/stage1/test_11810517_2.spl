@@ -1,6 +1,0 @@
-int a = 3;
-
-int test (){
-  int b = 0xFF;
-  c = 5;
-}

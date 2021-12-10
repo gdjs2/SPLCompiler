@@ -4,9 +4,11 @@
 #include <string.h>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 using std::cout;
 using std::endl;
+using std::ofstream;
 using std::stoi;
 using std::string;
 using std::to_string;
@@ -23,7 +25,7 @@ string new_label() {
     return "label" + to_string(label_cnt);
 }
 // translate the tree in post-order
-void generate_ir(tree_node* root) {
+void generate_ir(tree_node* root, string file_path) {
     if (root == nullptr) {
         printf("Empty parse tree\n");
         return;
@@ -32,8 +34,10 @@ void generate_ir(tree_node* root) {
     // Program -> ExtDefList
     translate_ExtDefList(ExtDefList);
     root->ir = ExtDefList->ir;
+    string out_path = file_path.substr(0, file_path.length() - 3) + "ir";
+    ofstream fout(out_path);
     for (auto i : root->ir) {
-        cout << i << endl;
+        fout << i << endl;
     }
 };
 

@@ -1,0 +1,11 @@
+FUNCTION main :
+n := #8
+DEC arr 256
+t2index := #0
+t3offset := t2index * #4
+t4addr := arr + t3offset
+t0 := *t4addr
+t1 := #3
+*t4addr := t1
+t5 := #0
+RETURN t5

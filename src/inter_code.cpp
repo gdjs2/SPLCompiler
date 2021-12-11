@@ -339,16 +339,31 @@ void translate_Exp(tree_node* node, string place) {
         // Exp -> Exp ASSIGN Exp
         if (!strcmp(node->child_first_ptr->next_child->node->name, "ASSIGN")) {
             if (Exp1->children_number == 4) {
-                // left side is an array
+                // array
                 string id = string(Exp1->child_first_ptr->node->child_first_ptr
                                        ->node->name)
                                 .substr(4);
-                string offset_value =
-                    string(Exp1->child_first_ptr->next_child->next_child->node
-                               ->child_first_ptr->node->name)
-                        .substr(5);
+                string offset_value;
+
                 string offset = new_place();
-                Exp1->ir.push_back(offset + " := #" + offset_value + " * #4");
+                if (!memcmp(Exp1->child_first_ptr->next_child->next_child->node
+                                ->child_first_ptr->node->name,
+                            "INT", 3)) {
+                    offset_value =
+                        string(Exp1->child_first_ptr->next_child->next_child
+                                   ->node->child_first_ptr->node->name)
+                            .substr(5);
+                    Exp1->ir.push_back(offset + " := #" + offset_value +
+                                       " * #4");
+                } else {
+                    offset_value =
+                        string(Exp1->child_first_ptr->next_child->next_child
+                                   ->node->child_first_ptr->node->name)
+                            .substr(4);
+                    Exp1->ir.push_back(offset + " := " + offset_value +
+                                       " * #4");
+                }
+
                 string address = new_place();
                 Exp1->ir.push_back(address + " := " + id + " + " + offset);
                 string place = new_place();
@@ -427,8 +442,9 @@ void translate_Exp(tree_node* node, string place) {
         }
     } else if (node->children_number == 4 &&
                !strcmp(node->child_first_ptr->next_child->node->name, "LP") &&
-               (node->child_first_ptr->next_child->next_child->node->name,
-                "Args")) {
+               !strcmp(
+                   node->child_first_ptr->next_child->next_child->node->name,
+                   "Args")) {
         // Exp -> ID LP Args RP
         string id = string(node->child_first_ptr->node->name).substr(4);
         tree_node* Args = node->child_first_ptr->next_child->next_child->node;
@@ -455,7 +471,42 @@ void translate_Exp(tree_node* node, string place) {
         concatenate_ir(node, Exp);
     }
 
-    else {
+    else if (node->children_number == 4 &&
+             !strcmp(node->child_first_ptr->next_child->node->name, "LB")) {
+        // Exp ->  Exp LB Exp RB
+        // array
+        string id =
+            string(node->child_first_ptr->node->child_first_ptr->node->name)
+                .substr(4);
+        string offset_value;
+
+        string offset = new_place();
+        if (!memcmp(node->child_first_ptr->next_child->next_child->node
+                        ->child_first_ptr->node->name,
+                    "INT", 3)) {
+            offset_value = string(node->child_first_ptr->next_child->next_child
+                                      ->node->child_first_ptr->node->name)
+                               .substr(5);
+            node->ir.push_back(offset + " := #" + offset_value + " * #4");
+        } else {
+            offset_value = string(node->child_first_ptr->next_child->next_child
+                                      ->node->child_first_ptr->node->name)
+                               .substr(4);
+            node->ir.push_back(offset + " := " + offset_value + " * #4");
+        }
+
+        string address = new_place();
+        node->ir.push_back(address + " := " + id + " + " + offset);
+
+        node->ir.push_back(place + " := *" + address);
+        // string id =
+        //     string(node->child_first_ptr->node->child_first_ptr->node->name)
+        //         .substr(4);
+        // string size =
+        //     string(node->child_first_ptr->next_child->next_child->node->name)
+        //         .substr(5);
+
+    } else {
         printf("Not implemented");
     }
 }

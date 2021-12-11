@@ -6,7 +6,7 @@
 extern int yylineno;
 
 tree_node* make_tree_node(const char* name, int line_no, int is_terminate) {
-    tree_node* node = (tree_node*)malloc(sizeof(tree_node));
+    tree_node* node = new tree_node;
     node->name = name;
     node->line_no = line_no ? line_no : yylineno;
     node->child_first_ptr = (child_list_node*)NULL;

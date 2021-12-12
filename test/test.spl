@@ -1,7 +1,17 @@
+struct Student
+{
+    int ID;
+    int score;
+};
+
 int main()
 {
-    int n = 8;
-    int arr[8];
-    arr[0]=3;
+    struct Student s1, s2;
+    s1.ID = 1;
+    s1.score = 70;
+    s2.ID = 2;
+    s2.score = 90;
+    write(s2.ID);
+    write(s1.score);
     return 0;
 }

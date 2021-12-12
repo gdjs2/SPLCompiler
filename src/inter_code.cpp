@@ -6,13 +6,19 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
 using std::cout;
 using std::endl;
+using std::make_pair;
 using std::ofstream;
 using std::stoi;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
+
+unordered_map<string, unordered_map<string, int>> struct_map;
+unordered_map<string, string> type_map;
 
 int tmp_cnt = 0;
 int label_cnt = 0;
@@ -73,7 +79,7 @@ void translate_ExtDefList(tree_node* node) {
     }
 }
 
-// ExtDefList -> Specifier ExtDecList SEMI +| Specifier SEMI +|Specifier FunDec
+// ExtDefList -> Specifier ExtDecList SEMI +| Specifier SEMI |Specifier FunDec
 // CompSt
 void translate_ExtDef(tree_node* node) {
     if (node->children_number == 3 &&
@@ -95,12 +101,38 @@ void translate_Specifier(tree_node* node) {
     if (!strcmp(node->child_first_ptr->node->name, "StructSpecifier")) {
         tree_node* StructSpecifier = node->child_first_ptr->node;
         translate_StructSpecifier(StructSpecifier);
-    } else {
-        printf("Error in translate_Specifier");
     }
 }
 
-void translate_StructSpecifier(tree_node* node) {}
+void _parse_Struct_DefList(unordered_map<string, int>& umap,
+                           tree_node* node,
+                           int i) {
+    if (!node || node->children_number == 1) {
+        return;
+    } else {
+        string id =
+            string(node->child_first_ptr->node->child_first_ptr->next_child
+                       ->node->child_first_ptr->node->child_first_ptr->node
+                       ->child_first_ptr->node->name)
+                .substr(4);
+        umap.insert(make_pair(id, i));
+        tree_node* DefList = node->child_first_ptr->next_child->node;
+        _parse_Struct_DefList(umap, DefList, i + 1);
+    }
+}
+void translate_StructSpecifier(tree_node* node) {
+    if (node->children_number == 5) {
+        //  STRUCT ID LC DefList RC
+        string id =
+            string(node->child_first_ptr->next_child->node->name).substr(4);
+        unordered_map<string, int> umap;
+        tree_node* DefList =
+            node->child_first_ptr->next_child->next_child->next_child->node;
+        _parse_Struct_DefList(umap, DefList, 0);
+        struct_map.insert(make_pair(id, umap));
+    } else if (node->children_number == 2) {
+    }
+}
 
 // FunDec -> ID LP RP | ID LP VarList RP
 void translate_FunDec(tree_node* node) {
@@ -150,12 +182,34 @@ void translate_DefList(tree_node* node) {
     }
 }
 
+void _parse_Struct_DecList(tree_node* node, string id) {
+    string variable = string(node->child_first_ptr->node->child_first_ptr->node
+                                 ->child_first_ptr->node->name)
+                          .substr(4);
+    type_map.insert(make_pair(variable, id));
+    auto size = struct_map[id].size();
+    node->ir.push_back("DEC " + variable + " " + to_string(size * 4));
+    if (node->children_number == 1) {
+        return;
+    }
+    tree_node* DecList = node->child_first_ptr->next_child->next_child->node;
+    _parse_Struct_DecList(DecList, id);
+    concatenate_ir(node, DecList);
+}
 // Def -> Specifier DecList SEMI
 void translate_Def(tree_node* node) {
     tree_node* Specifier = node->child_first_ptr->node;
     tree_node* DecList = node->child_first_ptr->next_child->node;
+    if (!strcmp(Specifier->child_first_ptr->node->name, "StructSpecifier")) {
+        string id = string(Specifier->child_first_ptr->node->child_first_ptr
+                               ->next_child->node->name)
+                        .substr(4);
+        _parse_Struct_DecList(DecList, id);
 
-    translate_DecList(DecList);
+    } else {
+        translate_DecList(DecList);
+    }
+
     concatenate_ir(node, DecList);
 }
 
@@ -370,6 +424,23 @@ void translate_Exp(tree_node* node, string place) {
                 translate_Exp(Exp2, place);
                 Exp2->ir.push_back("*" + address + " := " + place);
 
+            } else if (Exp1->children_number == 3) {
+                // struct
+                string id = string(Exp1->child_first_ptr->node->child_first_ptr
+                                       ->node->name)
+                                .substr(4);
+                string variable = string(Exp1->child_first_ptr->next_child
+                                             ->next_child->node->name)
+                                      .substr(4);
+
+                string address = new_place();
+                int offset = struct_map[type_map[id]][variable];
+                Exp1->ir.push_back(address + " := " + id + " + #" +
+                                   to_string(offset * 4));
+                string place = new_place();
+                translate_Exp(Exp2, place);
+
+                Exp2->ir.push_back("*" + address + " := " + place);
             } else {
                 string variable = string(node->child_first_ptr->node
                                              ->child_first_ptr->node->name)
@@ -379,7 +450,6 @@ void translate_Exp(tree_node* node, string place) {
                 // if (place != "")
                 //     node->ir.push_back(place + " := " + variable);
             }
-            node->ir.clear();
             concatenate_ir(node, Exp1, Exp2);
 
         } else if (!strcmp(node->child_first_ptr->next_child->node->name,
@@ -499,12 +569,20 @@ void translate_Exp(tree_node* node, string place) {
         node->ir.push_back(address + " := " + id + " + " + offset);
 
         node->ir.push_back(place + " := *" + address);
-        // string id =
-        //     string(node->child_first_ptr->node->child_first_ptr->node->name)
-        //         .substr(4);
-        // string size =
-        //     string(node->child_first_ptr->next_child->next_child->node->name)
-        //         .substr(5);
+
+    } else if (node->children_number == 3 &&
+               !strcmp(node->child_first_ptr->next_child->node->name, "DOT")) {
+        // struct
+        string id =
+            string(node->child_first_ptr->node->child_first_ptr->node->name)
+                .substr(4);
+        string variable =
+            string(node->child_first_ptr->next_child->next_child->node->name)
+                .substr(4);
+        auto offset = struct_map[type_map[id]][variable];
+        string tp = new_place();
+        node->ir.push_back(tp + " := " + id + " + #" + to_string(offset * 4));
+        node->ir.push_back(place + " := *" + tp);
 
     } else {
         printf("Not implemented");
@@ -590,11 +668,6 @@ void translate_cond_Exp(tree_node* node, string lb_t, string lb_f) {
         concatenate_ir(node, Exp1, Exp2);
         node->ir.push_back("IF " + t1 + " < " + t2 + " GOTO " + lb_t);
         node->ir.push_back("GOTO " + lb_f);
-    } else if (node->children_number == 4 &&
-               !strcmp(node->child_first_ptr->next_child->node->name, "LB")) {
-        // TODO
-    } else if (node->children_number == 3 &&
-               !strcmp(node->child_first_ptr->next_child->node->name, "DOT")) {
     }
 }
 

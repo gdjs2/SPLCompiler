@@ -1,12 +1,135 @@
-int main(){
-    int n = 8;
-    int arr[8];
-    int i = 0;
-    while(i < n)
-    {
-        arr[i] =  read();
-        write(arr[i]);
-        i = i + 1;
-    }
-    return 0;
-}
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        StructSpecifier (1)
+          STRUCT
+          ID: Student
+          LC
+          DefList (3)
+            Def (3)
+              Specifier (3)
+                TYPE: int
+              DecList (3)
+                Dec (3)
+                  VarDec (3)
+                    ID: ID
+              SEMI
+            DefList (4)
+              Def (4)
+                Specifier (4)
+                  TYPE: int
+                DecList (4)
+                  Dec (4)
+                    VarDec (4)
+                      ID: score
+                SEMI
+          RC
+      SEMI
+    ExtDefList (7)
+      ExtDef (7)
+        Specifier (7)
+          TYPE: int
+        FunDec (7)
+          ID: main
+          LP
+          RP
+        CompSt (8)
+          LC
+          DefList (9)
+            Def (9)
+              Specifier (9)
+                StructSpecifier (9)
+                  STRUCT
+                  ID: Student
+              DecList (9)
+                Dec (9)
+                  VarDec (9)
+                    ID: s1
+                COMMA
+                DecList (9)
+                  Dec (9)
+                    VarDec (9)
+                      ID: s2
+              SEMI
+          StmtList (10)
+            Stmt (10)
+              Exp (10)
+                Exp (10)
+                  Exp (10)
+                    ID: s1
+                  DOT
+                  ID: ID
+                ASSIGN
+                Exp (10)
+                  INT: 1
+              SEMI
+            StmtList (11)
+              Stmt (11)
+                Exp (11)
+                  Exp (11)
+                    Exp (11)
+                      ID: s1
+                    DOT
+                    ID: score
+                  ASSIGN
+                  Exp (11)
+                    INT: 70
+                SEMI
+              StmtList (12)
+                Stmt (12)
+                  Exp (12)
+                    Exp (12)
+                      Exp (12)
+                        ID: s2
+                      DOT
+                      ID: ID
+                    ASSIGN
+                    Exp (12)
+                      INT: 2
+                  SEMI
+                StmtList (13)
+                  Stmt (13)
+                    Exp (13)
+                      Exp (13)
+                        Exp (13)
+                          ID: s2
+                        DOT
+                        ID: score
+                      ASSIGN
+                      Exp (13)
+                        INT: 90
+                    SEMI
+                  StmtList (14)
+                    Stmt (14)
+                      Exp (14)
+                        ID: write
+                        LP
+                        Args (14)
+                          Exp (14)
+                            Exp (14)
+                              ID: s2
+                            DOT
+                            ID: ID
+                        RP
+                      SEMI
+                    StmtList (15)
+                      Stmt (15)
+                        Exp (15)
+                          ID: write
+                          LP
+                          Args (15)
+                            Exp (15)
+                              Exp (15)
+                                ID: s1
+                              DOT
+                              ID: score
+                          RP
+                        SEMI
+                      StmtList (16)
+                        Stmt (16)
+                          RETURN
+                          Exp (16)
+                            INT: 0
+                          SEMI
+          RC

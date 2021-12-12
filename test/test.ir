@@ -1,11 +1,23 @@
 FUNCTION main :
-n := #8
-DEC arr 256
-t2index := #0
-t3offset := t2index * #4
-t4addr := arr + t3offset
-t0 := *t4addr
-t1 := #3
-*t4addr := t1
-t5 := #0
-RETURN t5
+DEC s1 8
+DEC s2 8
+t2 := s1 + #0
+t3 := #1
+*t2 := t3
+t5 := s1 + #4
+t6 := #70
+*t5 := t6
+t8 := s2 + #0
+t9 := #2
+*t8 := t9
+t11 := s2 + #4
+t12 := #90
+*t11 := t12
+t15 := s2 + #0
+t14 := *t15
+WRITE t14
+t18 := s1 + #4
+t17 := *t18
+WRITE t17
+t19 := #0
+RETURN t19

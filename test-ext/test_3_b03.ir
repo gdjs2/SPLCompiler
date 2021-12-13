@@ -1,28 +1,37 @@
-FUNCTION main :
-DEC c1 8
-t2 := &c1 + #0
-READ t3
-*t2 := t3
-t5 := &c1 + #4
-READ t6
-*t5 := t6
-t9 := &c1 + #0
-t7 := *t9
-t8 := #0
-IF t7 == t8 GOTO label1
-GOTO label2
+FUNCTION sumArray :
+PARAM length
+n := #5
+DEC arr 20
+i := #0
+sum := #0
 LABEL label1 :
-t12 := &c1 + #4
-t11 := *t12
-WRITE t11
+t1 := i
+t2 := n
+IF t1 < t2 GOTO label2
 GOTO label3
 LABEL label2 :
-t15 := &c1 + #0
-t14 := *t15
-WRITE t14
-t18 := &c1 + #4
-t17 := *t18
-WRITE t17
+t4 := i * #4
+t5 := &arr + t4
+READ t6
+*t5 := t6
+t8 := sum
+t10 := i * #4
+t11 := &arr + t10
+t9 := *t11
+sum := t8 + t9
+t13 := i
+t14 := #1
+i := t13 + t14
+GOTO label1
 LABEL label3 :
+t15 := sum
+RETURN t15
+FUNCTION main :
+n := #5
+t16 := n
+ARG t16
+m := CALL sumArray
+t18 := m
+WRITE t18
 t19 := #0
 RETURN t19

@@ -1,29 +1,19 @@
-int searchVal(int c[8],int val)
+struct Complex
 {
-    int result=-1;
-    int i=0;
-    int n=8;
-    while(i<n){
-        if(val==c[i]){
-            result=i;
-        }
-        i=i+1;
-    }
-    return result;
-}
- 
+    int real;
+    int imaginary;
+};
+
 int main()
 {
-    
-    int arr[8];
-    arr[0] = read();
-    arr[1] = read();
-    arr[2] = read();
-    arr[3] = read();
-    arr[4] = read();
-    arr[5] = read();
-    arr[6] = read();
-    arr[7] = read();
-    write(searchVal(arr,8));
+    int sum ;
+    struct Complex c1,c2;
+    c1.real = read();
+    c1.imaginary = read();
+    // Conjugate Complex
+    c2.real=c1.real;
+    c2.imaginary=-c1.imaginary;
+    sum = c1.real * c2.real - c1.imaginary*c2.imaginary;
+    write(sum);
     return 0;
 }

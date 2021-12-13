@@ -1,4 +1,4 @@
-FUNCTION test :
+FUNCTION Joseph :
 PARAM n
 PARAM m
 DEC people 400
@@ -81,12 +81,12 @@ LABEL label6 :
 t44 := #0
 RETURN t44
 FUNCTION main :
-a := #3
-b := #5
+READ a
+READ b
 t48 := a
 t49 := b
 ARG t49
 ARG t48
-t47 := CALL test
+t47 := CALL Joseph
 t50 := #0
 RETURN t50

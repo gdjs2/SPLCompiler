@@ -1,21 +1,22 @@
-struct Complex
+int sumArray(int length)
 {
-    int real;
-    int imaginary;
-};
-
+    int n = 5;
+    int arr[5];
+    int i = 0;
+    int sum=0;
+    while(i < n)
+    {
+        arr[i] =  read();
+        sum=sum+arr[i];
+        i = i + 1;
+    }
+    return sum;
+}
+ 
 int main()
 {
-    struct Complex c1;
-    c1.real = read();
-    c1.imaginary = read();
-    if(c1.real==0){
-        // pure imaginary
-        write(c1.imaginary);
-    }else{
-        // otherwise
-        write(c1.real);
-        write(c1.imaginary);
-    }
+    int n=5;
+    int m=sumArray(n);
+    write(m);
     return 0;
 }

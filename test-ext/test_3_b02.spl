@@ -1,29 +1,22 @@
-int findMax(int c[8])
-{
-    int max=0;
-    int i=0;
-    int n=8;
-    while(i<n){
-        if(max<c[i]){
-            max=c[i];
-        }
-        i=i+1;
-    }
-    return max;
-}
- 
 int main()
 {
-    
+    int n = 8;
     int arr[8];
-    arr[0] = read();
-    arr[1] = read();
-    arr[2] = read();
-    arr[3] = read();
-    arr[4] = read();
-    arr[5] = read();
-    arr[6] = read();
-    arr[7] = read();
-    write(findMax(arr));
+    int i = 0;
+    int max=0;
+    while(i < n)
+    {
+        arr[i] =  read();
+        i = i + 1;
+    }
+    i = 0; 
+    while(i < n)
+    {
+        if(max<arr[i]){
+            max=arr[i];
+        }
+        i = i + 1;
+    }
+    write(max);
     return 0;
 }

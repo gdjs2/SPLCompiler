@@ -419,7 +419,7 @@ void translate_Exp(tree_node* node, string place) {
                 }
 
                 string address = new_place();
-                Exp1->ir.push_back(address + " := " + id + " + " + offset);
+                Exp1->ir.push_back(address + " := &" + id + " + " + offset);
                 string place = new_place();
                 translate_Exp(Exp2, place);
                 Exp2->ir.push_back("*" + address + " := " + place);
@@ -435,7 +435,7 @@ void translate_Exp(tree_node* node, string place) {
 
                 string address = new_place();
                 int offset = struct_map[type_map[id]][variable];
-                Exp1->ir.push_back(address + " := " + id + " + #" +
+                Exp1->ir.push_back(address + " := &" + id + " + #" +
                                    to_string(offset * 4));
                 string place = new_place();
                 translate_Exp(Exp2, place);
@@ -566,7 +566,7 @@ void translate_Exp(tree_node* node, string place) {
         }
 
         string address = new_place();
-        node->ir.push_back(address + " := " + id + " + " + offset);
+        node->ir.push_back(address + " := &" + id + " + " + offset);
 
         node->ir.push_back(place + " := *" + address);
 
@@ -581,7 +581,7 @@ void translate_Exp(tree_node* node, string place) {
                 .substr(4);
         auto offset = struct_map[type_map[id]][variable];
         string tp = new_place();
-        node->ir.push_back(tp + " := " + id + " + #" + to_string(offset * 4));
+        node->ir.push_back(tp + " := &" + id + " + #" + to_string(offset * 4));
         node->ir.push_back(place + " := *" + tp);
 
     } else {

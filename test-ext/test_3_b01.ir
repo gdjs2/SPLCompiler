@@ -1,4 +1,4 @@
-FUNCTION Joseph :
+FUNCTION test :
 PARAM n
 PARAM m
 DEC people 400
@@ -13,7 +13,7 @@ IF t1 <= t2 GOTO label2
 GOTO label3
 LABEL label2 :
 t4 := i * #4
-t5 := people + t4
+t5 := &people + t4
 t6 := #1
 *t5 := t6
 t8 := i
@@ -28,18 +28,16 @@ t12 := n
 IF t11 <= t12 GOTO label5
 GOTO label6
 LABEL label5 :
-t13 := helloworld
 t15 := i * #4
-t16 := people + t15
+t16 := &people + t15
 t13 := *t16
 t14 := #1
 IF t13 == t14 GOTO label7
 GOTO label8
 LABEL label7 :
 t18 := j
-t19 := helloworld
 t20 := i * #4
-t21 := people + t20
+t21 := &people + t20
 t19 := *t21
 j := t18 + t19
 t22 := j
@@ -51,7 +49,7 @@ t25 := i
 WRITE t25
 j := #0
 t28 := i * #4
-t29 := people + t28
+t29 := &people + t28
 t30 := #0
 *t29 := t30
 t32 := k
@@ -83,12 +81,12 @@ LABEL label6 :
 t44 := #0
 RETURN t44
 FUNCTION main :
-READ a
-READ b
+a := #3
+b := #5
 t48 := a
 t49 := b
 ARG t49
 ARG t48
-t47 := CALL Joseph
+t47 := CALL test
 t50 := #0
 RETURN t50

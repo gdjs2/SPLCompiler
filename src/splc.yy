@@ -38,8 +38,10 @@ Program:
 		$$ = make_tree_node("Program", $1->line_no, 0);
 		add_child($$, $1);
 		root = $$;
+#ifdef DEBUG
 		if (!has_error)
 			show_tree($$, 0);
+#endif
 	}
 	;
 ExtDefList: {

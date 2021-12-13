@@ -1,4 +1,4 @@
-int Joseph(int n,int m){
+int test(int n,int m){
     int people[100], i = 1;
     int j = 0, k = 0, num = 0;
     while(i <= n){
@@ -28,8 +28,8 @@ int Joseph(int n,int m){
 }
 int main(){
     int a, b;
-    a = read();
-    b = read();
-    Joseph(a, b);
+    a = 3;
+    b = 5;
+    test(a, b);
     return 0;
 }

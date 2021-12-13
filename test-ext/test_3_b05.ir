@@ -1,0 +1,71 @@
+FUNCTION searchVal :
+PARAM ec
+PARAM val
+t1 := #1
+result := #0 - t1
+i := #0
+n := #8
+LABEL label1 :
+t2 := i
+t3 := n
+IF t2 < t3 GOTO label2
+GOTO label3
+LABEL label2 :
+t4 := val
+t6 := i * #4
+t7 := &c + t6
+t5 := *t7
+IF t4 == t5 GOTO label4
+GOTO label5
+LABEL label4 :
+result := i
+LABEL label5 :
+t10 := i
+t11 := #1
+i := t10 + t11
+GOTO label1
+LABEL label3 :
+t12 := result
+RETURN t12
+FUNCTION main :
+DEC arr 32
+t14 := #0 * #4
+t15 := &arr + t14
+READ t16
+*t15 := t16
+t18 := #1 * #4
+t19 := &arr + t18
+READ t20
+*t19 := t20
+t22 := #2 * #4
+t23 := &arr + t22
+READ t24
+*t23 := t24
+t26 := #3 * #4
+t27 := &arr + t26
+READ t28
+*t27 := t28
+t30 := #4 * #4
+t31 := &arr + t30
+READ t32
+*t31 := t32
+t34 := #5 * #4
+t35 := &arr + t34
+READ t36
+*t35 := t36
+t38 := #6 * #4
+t39 := &arr + t38
+READ t40
+*t39 := t40
+t42 := #7 * #4
+t43 := &arr + t42
+READ t44
+*t43 := t44
+t47 := arr
+t48 := #8
+ARG t48
+ARG t47
+t46 := CALL searchVal
+WRITE t46
+t49 := #0
+RETURN t49

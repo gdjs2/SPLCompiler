@@ -1,0 +1,15 @@
+struct Complex
+{
+    int real;
+    int imaginary;
+};
+
+int main()
+{
+    struct Complex c1;
+    c1.real = read();
+    c1.imaginary = read();
+    write(c1.real);
+    write(c1.imaginary);
+    return 0;
+}

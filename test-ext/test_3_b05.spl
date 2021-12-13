@@ -1,0 +1,29 @@
+int searchVal(int c[8],int val)
+{
+    int result=-1;
+    int i=0;
+    int n=8;
+    while(i<n){
+        if(val==c[i]){
+            result=i;
+        }
+        i=i+1;
+    }
+    return result;
+}
+ 
+int main()
+{
+    
+    int arr[8];
+    arr[0] = read();
+    arr[1] = read();
+    arr[2] = read();
+    arr[3] = read();
+    arr[4] = read();
+    arr[5] = read();
+    arr[6] = read();
+    arr[7] = read();
+    write(searchVal(arr,8));
+    return 0;
+}

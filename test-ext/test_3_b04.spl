@@ -1,0 +1,29 @@
+struct Student
+{
+    int ID;
+    int score;
+};
+
+struct Complex
+{
+    int real;
+    int imaginary;
+};
+
+int main()
+{
+    struct Student s1, s2;
+    struct Complex c1,c2;
+    int arr[2];
+    arr[0]=1;
+    arr[1]=-1;
+    s1.ID = 1;
+    s1.score = 70;
+    s2.ID = 2;
+    s2.score = 90;
+    c1.real=10;
+    c1.imaginary=-10;
+    write(s2.ID*arr[0]+c1.real);
+    write(s1.score*arr[1]+c1.imaginary);
+    return 0;
+}

@@ -1,5 +1,0 @@
-int main()
-{
-    int people[10];
-    people[1]=4;
-}

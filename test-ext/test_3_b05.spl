@@ -1,0 +1,19 @@
+struct Complex
+{
+    int real;
+    int imaginary;
+};
+
+int main()
+{
+    int sum ;
+    struct Complex c1,c2;
+    c1.real = read();
+    c1.imaginary = read();
+    // Conjugate Complex
+    c2.real=c1.real;
+    c2.imaginary=-c1.imaginary;
+    sum = c1.real * c2.real - c1.imaginary*c2.imaginary;
+    write(sum);
+    return 0;
+}

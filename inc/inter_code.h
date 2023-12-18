@@ -3,7 +3,7 @@
 
 #include "tree_node.h"
 
-void generate_ir(tree_node*);
+void generate_ir(tree_node*,string);
 void concatenate_ir(tree_node*, tree_node*, tree_node*);
 void translate_ExtDefList(tree_node*);
 void translate_ExtDef(tree_node*);

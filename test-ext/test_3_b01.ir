@@ -1,0 +1,92 @@
+FUNCTION Joseph :
+PARAM n
+PARAM m
+DEC people 400
+i := #1
+j := #0
+k := #0
+num := #0
+LABEL label1 :
+t1 := i
+t2 := n
+IF t1 <= t2 GOTO label2
+GOTO label3
+LABEL label2 :
+t4 := i * #4
+t5 := &people + t4
+t6 := #1
+*t5 := t6
+t8 := i
+t9 := #1
+i := t8 + t9
+GOTO label1
+LABEL label3 :
+i := #1
+LABEL label4 :
+t11 := i
+t12 := n
+IF t11 <= t12 GOTO label5
+GOTO label6
+LABEL label5 :
+t15 := i * #4
+t16 := &people + t15
+t13 := *t16
+t14 := #1
+IF t13 == t14 GOTO label7
+GOTO label8
+LABEL label7 :
+t18 := j
+t20 := i * #4
+t21 := &people + t20
+t19 := *t21
+j := t18 + t19
+t22 := j
+t23 := m
+IF t22 == t23 GOTO label9
+GOTO label10
+LABEL label9 :
+t25 := i
+WRITE t25
+j := #0
+t28 := i * #4
+t29 := &people + t28
+t30 := #0
+*t29 := t30
+t32 := k
+t33 := #1
+k := t32 + t33
+LABEL label10 :
+t34 := k
+t35 := n
+IF t34 == t35 GOTO label11
+GOTO label12
+LABEL label11 :
+num := i
+t37 := #0
+RETURN t37
+LABEL label12 :
+LABEL label8 :
+t38 := i
+t39 := n
+IF t38 == t39 GOTO label13
+GOTO label14
+LABEL label13 :
+i := #0
+LABEL label14 :
+t42 := i
+t43 := #1
+i := t42 + t43
+GOTO label4
+LABEL label6 :
+t44 := #0
+RETURN t44
+FUNCTION main :
+READ a
+READ b
+t48 := a
+t49 := b
+ARG t49
+ARG t48
+t47 := CALL Joseph
+t50 := #0
+RETURN t50
